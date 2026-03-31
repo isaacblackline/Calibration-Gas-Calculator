@@ -1,2 +1,1000 @@
-# Calibration-Gas-Calculator
-This is a calculator designed to provide users with an estimates savings on their Calibration setup based on different SOP for Bump and Calibration Tests 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gas Detection Cost Calculator | Blackline Safety</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red: #C41230;
+    --red-dark: #9A0E26;
+    --red-light: #F9E8EB;
+    --black: #111111;
+    --charcoal: #1E1E1E;
+    --slate: #3A3A3A;
+    --mid: #6B6B6B;
+    --border: #E2E2E2;
+    --bg: #F7F6F4;
+    --white: #FFFFFF;
+    --green: #0F6B3A;
+    --green-light: #E8F5EE;
+    --amber: #8A4800;
+    --amber-light: #FEF3E2;
+    --font-head: 'Bebas Neue', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --radius: 4px;
+    --radius-lg: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.12), 0 12px 40px rgba(0,0,0,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--black);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--black);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 0; font-family: var(--font-body); font-weight: 600; font-size: 16px; letter-spacing: -0.3px; }
+  .logo span:first-child { color: var(--white); }
+  .logo span:last-child { color: var(--red); }
+  .header-badge {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    color: #888;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--charcoal);
+    padding: 48px 32px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 240px; height: 100%;
+    background: var(--red);
+    clip-path: polygon(30% 0%, 100% 0%, 100% 100%, 0% 100%);
+    opacity: 0.15;
+  }
+  .hero-inner { max-width: 860px; margin: 0 auto; position: relative; }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--red);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-family: var(--font-head);
+    font-size: clamp(36px, 5vw, 56px);
+    letter-spacing: 1px;
+    color: var(--white);
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+  .hero h1 em { color: var(--red); font-style: normal; }
+  .hero-sub {
+    color: #AAAAAA;
+    font-size: 15px;
+    max-width: 560px;
+    line-height: 1.65;
+    margin-bottom: 0;
+  }
+  .hero-rule {
+    width: 48px; height: 3px;
+    background: var(--red);
+    margin: 20px 0 0;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .card-header-icon {
+    width: 32px; height: 32px;
+    background: var(--red);
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .card-header-icon svg { width: 16px; height: 16px; fill: white; }
+  .card-title { font-size: 14px; font-weight: 600; color: var(--black); }
+  .card-subtitle { font-size: 12px; color: var(--mid); margin-top: 1px; }
+  .card-body { padding: 24px; }
+
+  /* ── GRID ── */
+  .input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+  }
+  .input-grid.two-col { grid-template-columns: 1fr 1fr; }
+  .input-grid.three-col { grid-template-columns: 1fr 1fr 1fr; }
+
+  @media (max-width: 600px) {
+    .input-grid, .input-grid.two-col, .input-grid.three-col { grid-template-columns: 1fr; }
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--slate);
+    letter-spacing: 0.2px;
+  }
+  .field-hint { font-size: 11px; color: var(--mid); line-height: 1.4; }
+  .field-default { font-size: 11px; color: var(--mid); font-style: italic; }
+
+  .input-wrap { position: relative; }
+  .input-prefix, .input-suffix {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    font-size: 13px;
+    color: var(--mid);
+    font-family: var(--font-mono);
+    pointer-events: none;
+  }
+  .input-prefix { left: 12px; }
+  .input-suffix { right: 12px; }
+
+  input[type="number"], input[type="text"], select {
+    width: 100%;
+    height: 42px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--black);
+    background: var(--white);
+    padding: 0 12px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input[type="number"]:focus, input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(196,18,48,0.1);
+  }
+  input.has-prefix { padding-left: 28px; }
+  input.has-suffix { padding-right: 36px; }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B6B6B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+  /* ── TOGGLE SECTION ── */
+  .toggle-section { margin-top: 16px; }
+  .toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--slate);
+    cursor: pointer;
+    transition: all 0.15s;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .toggle-btn:hover { border-color: var(--red); color: var(--red); }
+  .toggle-btn.active { border-color: var(--red); color: var(--red); background: var(--red-light); }
+  .toggle-arrow { transition: transform 0.2s; font-size: 10px; }
+  .toggle-btn.active .toggle-arrow { transform: rotate(180deg); }
+  .toggle-content { display: none; padding-top: 20px; }
+  .toggle-content.open { display: block; }
+
+  /* ── SCENARIO RESULTS ── */
+  .results-section { margin-top: 32px; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .scenario-grid { grid-template-columns: 1fr; } }
+
+  .scenario-card {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .scenario-card.current .scenario-header { background: var(--charcoal); }
+  .scenario-card.alternative .scenario-header { background: var(--red); }
+  .scenario-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .scenario-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  .scenario-name { font-size: 15px; font-weight: 600; color: white; }
+  .scenario-interval { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 3px; font-family: var(--font-mono); }
+
+  .scenario-body { background: white; padding: 20px; }
+  .cost-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #F0F0F0;
+    font-size: 13px;
+  }
+  .cost-line:last-of-type { border-bottom: none; }
+  .cost-line-label { color: var(--mid); }
+  .cost-line-value { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--slate); }
+  .cost-total-block { margin-top: 16px; padding: 14px 16px; background: var(--bg); border-radius: var(--radius); }
+  .cost-total-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--mid); margin-bottom: 4px; }
+  .cost-total-value { font-family: var(--font-mono); font-size: 26px; font-weight: 500; color: var(--black); }
+
+  /* ── SAVING BANNER ── */
+  .saving-banner {
+    margin-top: 20px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    background: var(--white);
+    display: none;
+  }
+  .saving-banner.visible { display: block; }
+  .saving-banner-header {
+    background: var(--green);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .saving-label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 2px; text-transform: uppercase; }
+  .saving-amount { font-family: var(--font-mono); font-size: 32px; font-weight: 500; color: white; }
+  .saving-sub { font-size: 13px; color: rgba(255,255,255,0.75); }
+  .saving-body { padding: 20px 24px; }
+  .saving-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+  .saving-item { display: flex; flex-direction: column; gap: 4px; }
+  .saving-item-label { font-size: 11px; color: var(--mid); font-weight: 500; }
+  .saving-item-value { font-family: var(--font-mono); font-size: 16px; font-weight: 500; color: var(--green); }
+
+  .saving-negative { background: var(--amber-light); border-left: 3px solid var(--amber); padding: 12px 16px; border-radius: var(--radius); margin-top: 16px; font-size: 13px; color: var(--amber); }
+
+  /* ── METHODOLOGY ── */
+  .methodology {
+    margin-top: 40px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .methodology-header {
+    padding: 16px 24px;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+  .methodology-header-left { display: flex; align-items: center; gap: 10px; }
+  .methodology-icon { width: 20px; height: 20px; fill: var(--red); }
+  .methodology-title { font-size: 13px; font-weight: 600; color: white; }
+  .methodology-sub { font-size: 11px; color: #888; }
+  .methodology-toggle { font-size: 11px; color: #888; display: flex; align-items: center; gap: 6px; }
+  .methodology-body { display: none; padding: 28px 24px; background: #FAFAFA; }
+  .methodology-body.open { display: block; }
+  .methodology-body h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--slate); margin: 24px 0 10px; }
+  .methodology-body h4:first-child { margin-top: 0; }
+  .methodology-body p { font-size: 13px; color: var(--mid); line-height: 1.7; margin-bottom: 10px; }
+  .methodology-body p:last-child { margin-bottom: 0; }
+  .methodology-body strong { color: var(--slate); font-weight: 600; }
+  .methodology-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .tag {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--slate);
+  }
+  .tag.included { background: var(--green-light); border-color: #B0DFCA; color: var(--green); }
+  .tag.excluded { background: var(--amber-light); border-color: #F7C98C; color: var(--amber); }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    margin-top: 24px;
+    padding: 16px 20px;
+    background: var(--red-light);
+    border-left: 3px solid var(--red);
+    border-radius: var(--radius);
+    font-size: 12px;
+    color: #6B2030;
+    line-height: 1.6;
+  }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    background: var(--black);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-logo { display: flex; align-items: center; gap: 0; font-family: var(--font-body); font-weight: 600; font-size: 14px; }
+  .footer-logo span:first-child { color: var(--white); }
+  .footer-logo span:last-child { color: var(--red); }
+  .footer-note { font-size: 11px; color: #555; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-in { animation: fadeUp 0.4s ease forwards; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 480px) {
+    .hero { padding: 32px 20px 28px; }
+    .main { padding: 28px 16px 60px; }
+    .card-body { padding: 16px; }
+    .saving-banner-header { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* Number inputs - remove spinners */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  input[type="number"] { -moz-appearance: textfield; }
+
+  /* Tooltip */
+  .tooltip-wrap { position: relative; display: inline-flex; align-items: center; gap: 5px; }
+  .tooltip-icon {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--border);
+    color: var(--mid);
+    font-size: 9px;
+    font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: help;
+    flex-shrink: 0;
+  }
+  .tooltip-text {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 0;
+    background: var(--charcoal);
+    color: white;
+    font-size: 11px;
+    padding: 8px 12px;
+    border-radius: var(--radius);
+    width: 220px;
+    line-height: 1.5;
+    z-index: 50;
+    box-shadow: var(--shadow-lg);
+  }
+  .tooltip-wrap:hover .tooltip-text { display: block; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo"><span>blackline</span><span>safety</span></div>
+  <div class="header-badge">Gas Detection Cost Calculator</div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Self-Serve Cost Modelling Tool</div>
+    <h1>What Is Your Testing<br>Regime <em>Actually</em> Costing?</h1>
+    <p class="hero-sub">Enter your fleet details to model the annual cost of your current bump test and calibration intervals — then see what a risk-calibrated alternative would look like.</p>
+    <div class="hero-rule"></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- TIER 1: ESSENTIAL INPUTS -->
+  <div class="section-label">Essential Inputs</div>
+
+  <div class="card" style="margin-bottom: 16px;">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <svg viewBox="0 0 16 16"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 1.5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zM8 4a.75.75 0 100 1.5A.75.75 0 008 4zm-.75 2.5a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4z"/></svg>
+      </div>
+      <div>
+        <div class="card-title">Fleet and Working Period</div>
+        <div class="card-subtitle">How many devices and over what timeframe</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="input-grid three-col">
+        <div class="field">
+          <label class="field-label tooltip-wrap">
+            Number of Devices
+            <span class="tooltip-icon">?<span class="tooltip-text">Total number of gas detectors in your fleet. This is the multiplier that scales every other cost in the model.</span></span>
+          </label>
+          <div class="input-wrap">
+            <input type="number" id="devices" min="1" placeholder="e.g. 100" oninput="calculate()">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label tooltip-wrap">
+            Working Days Per Year
+            <span class="tooltip-icon">?<span class="tooltip-text">Set the working period for your organisation. 220 days is typical for most operations. Adjust if your site runs more or fewer days.</span></span>
+          </label>
+          <select id="workingDays" onchange="calculate()">
+            <option value="220">220 days (standard)</option>
+            <option value="250">250 days</option>
+            <option value="260">260 days (5 days/wk)</option>
+            <option value="365">365 days (24/7 operations)</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+        <div class="field" id="customDaysField" style="display:none;">
+          <label class="field-label">Custom Working Days</label>
+          <div class="input-wrap">
+            <input type="number" id="customDays" min="1" max="365" placeholder="Enter days" oninput="calculate()">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom: 16px;">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <svg viewBox="0 0 16 16"><path d="M3.5 1A1.5 1.5 0 002 2.5v11A1.5 1.5 0 003.5 15h9a1.5 1.5 0 001.5-1.5v-11A1.5 1.5 0 0012.5 1h-9zm0 1.5h9v11h-9v-11zM5 5h6v1H5V5zm0 3h6v1H5V8zm0 3h4v1H5v-1z"/></svg>
+      </div>
+      <div>
+        <div class="card-title">Current Testing Regime</div>
+        <div class="card-subtitle">How frequently you test today</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="input-grid two-col">
+        <div class="field">
+          <label class="field-label tooltip-wrap">
+            Current Bump Test Frequency
+            <span class="tooltip-icon">?<span class="tooltip-text">How often bump tests are performed today. Daily is most common under legacy SOPs. This applies to routine interval testing only.</span></span>
+          </label>
+          <select id="currentBump" onchange="calculate()">
+            <option value="1">Daily (every working day)</option>
+            <option value="2">Every 2 days</option>
+            <option value="3">Every 3 days</option>
+            <option value="7">Weekly</option>
+            <option value="14">Every 2 weeks</option>
+            <option value="30">Monthly (every 30 days)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label tooltip-wrap">
+            Current Calibration Frequency
+            <span class="tooltip-icon">?<span class="tooltip-text">How often full calibrations are performed today. Many organisations calibrate daily or every 30 days depending on jurisdiction and risk appetite.</span></span>
+          </label>
+          <select id="currentCal" onchange="calculate()">
+            <option value="1">Daily (every working day)</option>
+            <option value="7">Weekly</option>
+            <option value="14">Every 2 weeks</option>
+            <option value="30" selected>Monthly (every 30 days)</option>
+            <option value="60">Every 60 days</option>
+            <option value="90">Every 90 days</option>
+            <option value="180">Every 180 days</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom: 16px;">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <svg viewBox="0 0 16 16"><path d="M8 1a1 1 0 011 1v1.5h1.5a1 1 0 010 2H9V7a1 1 0 01-2 0V5.5H5.5a1 1 0 010-2H7V2a1 1 0 011-1zM2 10a1 1 0 011-1h10a1 1 0 010 2H3a1 1 0 01-1-1zm1 3a1 1 0 000 2h10a1 1 0 000-2H3z"/></svg>
+      </div>
+      <div>
+        <div class="card-title">Calibration Gas Cost</div>
+        <div class="card-subtitle">Your cylinder size, cost, and consumption per test</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="input-grid three-col">
+        <div class="field">
+          <label class="field-label tooltip-wrap">
+            Cylinder Size (litres)
+            <span class="tooltip-icon">?<span class="tooltip-text">The total volume of your calibration gas cylinder. Common sizes are 34L, 58L, and 103L. Check your cylinder label.</span></span>
+          </label>
+          <div class="input-wrap">
+            <input type="number" id="cylinderSize" min="1" placeholder="e.g. 34" class="has-suffix" oninput="calculate()">
+            <span class="input-suffix">L</span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label tooltip-wrap">
+            Cylinder Cost
+            <span class="tooltip-icon">?<span class="tooltip-text">The total cost of one cylinder including any delivery charges. Many organisations underestimate this by forgetting delivery and handling fees.</span></span>
+          </label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="cylinderCost" min="0" placeholder="e.g. 85" class="has-prefix" oninput="calculate()">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label tooltip-wrap">
+            Gas Per Bump Test (litres)
+            <span class="tooltip-icon">?<span class="tooltip-text">Volume consumed in a single bump test. Default 0.5L is based on a standard 30-second flow at a typical regulator rate. Adjust if your setup differs. Calibrations typically use 1.5–3x this volume.</span></span>
+          </label>
+          <div class="input-wrap">
+            <input type="number" id="gasPerBump" min="0.1" step="0.1" placeholder="0.5" class="has-suffix" oninput="calculate()">
+            <span class="input-suffix">L</span>
+          </div>
+          <div class="field-default">Default: 0.5L per bump test</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom: 24px;">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <svg viewBox="0 0 16 16"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>
+      </div>
+      <div>
+        <div class="card-title">Labour Cost</div>
+        <div class="card-subtitle">Technician time and fully-loaded hourly rate</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="input-grid two-col">
+        <div class="field">
+          <label class="field-label tooltip-wrap">
+            Time Per Test Event (minutes)
+            <span class="tooltip-icon">?<span class="tooltip-text">Total minutes per test event including setup, the test itself, device logging, and any downtime. This is typically 8–15 minutes per device in a manual process, less with a docking station.</span></span>
+          </label>
+          <div class="input-wrap">
+            <input type="number" id="timePerTest" min="1" placeholder="e.g. 10" class="has-suffix" oninput="calculate()">
+            <span class="input-suffix">min</span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label tooltip-wrap">
+            Fully-Loaded Hourly Rate
+            <span class="tooltip-icon">?<span class="tooltip-text">The true cost of technician time including base salary, benefits, overhead, and any contractor margin. Fully-loaded rates are typically 1.3–1.6x base salary.</span></span>
+          </label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="hourlyRate" min="0" placeholder="e.g. 65" class="has-prefix" oninput="calculate()">
+            <span class="input-suffix">/hr</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIER 2: REFINE ASSUMPTIONS -->
+  <div class="toggle-section">
+    <button class="toggle-btn" id="assumptionsToggle" onclick="toggleSection('assumptions', this)">
+      <span>Refine Assumptions <span style="font-weight:400;color:var(--mid);font-size:12px;">&nbsp;Retest rate, confined space, gas efficiency</span></span>
+      <span class="toggle-arrow">&#9660;</span>
+    </button>
+    <div class="toggle-content" id="assumptions">
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-body">
+          <div class="input-grid three-col">
+            <div class="field">
+              <label class="field-label tooltip-wrap">
+                Cylinder Efficiency Factor
+                <span class="tooltip-icon">?<span class="tooltip-text">Gas lost during cylinder connection, regulator purge, and residual gas that cannot be extracted when pressure drops below the regulator's operating threshold. Industry norm is 80–90%.</span></span>
+              </label>
+              <select id="cylinderEff" onchange="calculate()">
+                <option value="0.90">90% — Docking station, minimal loss</option>
+                <option value="0.85" selected>85% — Standard (default)</option>
+                <option value="0.80">80% — Manual connections, some waste</option>
+                <option value="0.75">75% — Older equipment, high waste</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label tooltip-wrap">
+                Retest Rate
+                <span class="tooltip-icon">?<span class="tooltip-text">Percentage of tests that require a retest due to a device failing or an inconclusive result. Each retest consumes additional gas and technician time. Default is 0% for well-maintained fleets.</span></span>
+              </label>
+              <select id="retestRate" onchange="calculate()">
+                <option value="0" selected>0% — No retests assumed</option>
+                <option value="0.02">2% — Low retest rate</option>
+                <option value="0.05">5% — Moderate retest rate</option>
+                <option value="0.10">10% — High retest rate</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label tooltip-wrap">
+                Confined Space Entries Per Week
+                <span class="tooltip-icon">?<span class="tooltip-text">If your team performs confined space entries, a bump test before each entry is required by regulation regardless of sensor type. This adds a fixed testing cost to both scenarios.</span></span>
+              </label>
+              <div class="input-wrap">
+                <input type="number" id="confinedSpace" min="0" placeholder="0" oninput="calculate()">
+              </div>
+              <div class="field-default">0 = not applicable</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-section" id="results" style="display:none;">
+    <div class="divider" style="margin: 32px 0 28px;"></div>
+    <div class="section-label">Cost Comparison</div>
+
+    <div class="scenario-grid">
+      <div class="scenario-card current">
+        <div class="scenario-header">
+          <div>
+            <div class="scenario-label">Scenario A</div>
+            <div class="scenario-name">Your Current Regime</div>
+            <div class="scenario-interval" id="currentIntervalLabel">Daily bump / 30-day cal</div>
+          </div>
+        </div>
+        <div class="scenario-body">
+          <div class="cost-line"><span class="cost-line-label">Bump tests per year (fleet)</span><span class="cost-line-value" id="sBumpTests">-</span></div>
+          <div class="cost-line"><span class="cost-line-label">Calibrations per year (fleet)</span><span class="cost-line-value" id="sCalTests">-</span></div>
+          <div class="cost-line"><span class="cost-line-label">Total gas consumed (L)</span><span class="cost-line-value" id="sTotalGas">-</span></div>
+          <div class="cost-line"><span class="cost-line-label">Annual gas cost</span><span class="cost-line-value" id="sGasCost">-</span></div>
+          <div class="cost-line"><span class="cost-line-label">Annual labour cost</span><span class="cost-line-value" id="sLabourCost">-</span></div>
+          <div class="cost-line"><span class="cost-line-label">Confined space testing cost</span><span class="cost-line-value" id="sCSCost">-</span></div>
+          <div class="cost-total-block">
+            <div class="cost-total-label">Estimated Annual Total</div>
+            <div class="cost-total-value" id="sTotal">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-card alternative">
+        <div class="scenario-header">
+          <div>
+            <div class="scenario-label">Scenario B</div>
+            <div class="scenario-name">Risk-Calibrated Alternative</div>
+            <div class="scenario-interval">30-day bump / 180-day cal (MPS)</div>
+          </div>
+        </div>
+        <div class="scenario-body">
+          <div class="cost-line"><span class="cost-line-label">Bump tests per year (fleet)</span><span class="cost-line-value" id="aBumpTests">-</span></div>
+          <div class="cost-line"><span class="cost-line-label">Calibrations per year (fleet)</span><span class="cost-line-value" id="aCalTests">-</span></div>
+          <div class="cost-line"><span class="cost-line-label">Total gas consumed (L)</span><span class="cost-line-value" id="aTotalGas">-</span></div>
+          <div class="cost-line"><span class="cost-line-label">Annual gas cost</span><span class="cost-line-value" id="aGasCost">-</span></div>
+          <div class="cost-line"><span class="cost-line-label">Annual labour cost</span><span class="cost-line-value" id="aLabourCost">-</span></div>
+          <div class="cost-line"><span class="cost-line-label">Confined space testing cost</span><span class="cost-line-value" id="aCSCost">-</span></div>
+          <div class="cost-total-block">
+            <div class="cost-total-label">Estimated Annual Total</div>
+            <div class="cost-total-value" id="aTotal">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAVING BANNER -->
+    <div class="saving-banner" id="savingBanner">
+      <div class="saving-banner-header">
+        <div>
+          <div class="saving-label">Estimated Annual Saving</div>
+          <div class="saving-amount" id="savingAmount">$0</div>
+        </div>
+        <div class="saving-sub" id="savingSubtext"></div>
+      </div>
+      <div class="saving-body">
+        <div class="saving-breakdown">
+          <div class="saving-item">
+            <div class="saving-item-label">Gas cost saving</div>
+            <div class="saving-item-value" id="savingGas">-</div>
+          </div>
+          <div class="saving-item">
+            <div class="saving-item-label">Labour cost saving</div>
+            <div class="saving-item-value" id="savingLabour">-</div>
+          </div>
+          <div class="saving-item">
+            <div class="saving-item-label">Reduction in test events</div>
+            <div class="saving-item-value" id="savingTests">-</div>
+          </div>
+          <div class="saving-item">
+            <div class="saving-item-label">Reduction in technician hours</div>
+            <div class="saving-item-value" id="savingHours">-</div>
+          </div>
+        </div>
+        <div class="saving-negative" id="savingNegative" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Important:</strong> This calculator models routine interval testing only. It does not include pre-task testing required before confined space entry, post-alarm retesting, or testing following over-limit or under-limit sensor events — which are required regardless of sensor type or testing interval. Results are estimates based on your inputs and should be used as a discussion starting point, not as a compliance document. Always apply the most stringent requirements applicable to your site.
+    </div>
+  </div>
+
+  <!-- TIER 3: METHODOLOGY -->
+  <div class="methodology" style="margin-top: 32px;">
+    <div class="methodology-header" onclick="toggleMethodology()">
+      <div class="methodology-header-left">
+        <svg class="methodology-icon" viewBox="0 0 20 20"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/></svg>
+        <div>
+          <div class="methodology-title">Calculation Methodology and Scope</div>
+          <div class="methodology-sub">How this calculator works and what it accounts for</div>
+        </div>
+      </div>
+      <div class="methodology-toggle" id="methToggleLabel">Show <span style="font-size:10px;margin-left:4px;">&#9660;</span></div>
+    </div>
+    <div class="methodology-body" id="methodologyBody">
+      <h4>What This Calculator Models</h4>
+      <p>This calculator models the <strong>annual cost of routine interval-based bump testing and calibration</strong> for a portable gas detection fleet. It compares your current testing regime against a risk-calibrated alternative based on the maintenance intervals validated for LEL MPS sensor technology: up to 30-day bump test intervals and up to 180-day calibration intervals under appropriate conditions.</p>
+      <p>Costs are calculated across two dimensions: <strong>calibration gas consumption</strong> (cylinder volume, cost, and efficiency-adjusted usable volume per test) and <strong>technician labour</strong> (time per test event multiplied by fully-loaded hourly rate). Both dimensions are applied across the full fleet for the selected annual working period.</p>
+
+      <h4>Cylinder Efficiency Factor</h4>
+      <p>Cylinders are never fully exhausted in practice. Gas is lost during regulator connection and purging (typically 0.1–0.3L per connection event), and residual gas cannot be extracted once cylinder pressure drops below the regulator's minimum operating threshold (approximately 10–15% of cylinder volume). The efficiency factor — defaulted to 85% — adjusts the usable cylinder volume to reflect real-world conditions rather than theoretical capacity.</p>
+
+      <h4>Calibration Gas Volume Ratio</h4>
+      <p>Full calibration events consume more gas than bump tests due to the longer exposure time required to establish an accurate reference point. The calculator applies a <strong>3x multiplier</strong> to the bump test gas volume for calibration events. This is a conservative estimate; actual consumption depends on your regulator flow rate, device sensor count, and calibration procedure duration.</p>
+
+      <h4>What Is Excluded From This Model</h4>
+      <p>This calculator deliberately excludes certain testing categories that are <strong>event-driven rather than interval-driven</strong>, and whose frequency depends on site-specific conditions that cannot be generalised:</p>
+      <div class="methodology-tags">
+        <span class="tag excluded">Pre-task testing (confined space entry)</span>
+        <span class="tag excluded">Post-alarm retesting</span>
+        <span class="tag excluded">Post over-limit event recalibration</span>
+        <span class="tag excluded">Post under-limit event testing</span>
+        <span class="tag excluded">Emergency response testing</span>
+        <span class="tag excluded">Post-incident return-to-service</span>
+      </div>
+      <p style="margin-top:14px;">If confined space entry is entered in the refinement section, those tests are added to <strong>both scenarios equally</strong> — since pre-entry bump testing is a regulatory requirement regardless of sensor type or interval regime. This does not affect the saving calculation but produces a more accurate total cost picture.</p>
+
+      <h4>What Is Included</h4>
+      <div class="methodology-tags">
+        <span class="tag included">Routine interval bump testing</span>
+        <span class="tag included">Routine interval calibration</span>
+        <span class="tag included">Cylinder gas cost (efficiency-adjusted)</span>
+        <span class="tag included">Technician labour (fully-loaded)</span>
+        <span class="tag included">Retest allowance (if selected)</span>
+        <span class="tag included">Confined space pre-entry testing (additive)</span>
+      </div>
+
+      <h4>Scenario B: The Risk-Calibrated Alternative</h4>
+      <p>Scenario B applies bump test intervals of up to 30 days and calibration intervals of up to 180 days. These intervals are based on manufacturer-validated performance data for LEL MPS sensors operating in low-to-medium risk diffused applications. They <strong>do not apply</strong> to confined space entry, IDLH environments, sites where sensor poisons are present, multi-gas devices where not all sensors are MPS-type, or any site where regulations or insurance requirements mandate more frequent testing.</p>
+
+      <h4>Important Limitations</h4>
+      <p>Results are estimates and should be treated as a starting point for internal discussion. Actual savings depend on negotiated gas pricing, specific device and regulator configurations, the mix of sensor types in your fleet, and applicable regulatory requirements in your jurisdiction. This tool does not constitute compliance guidance. Always apply the most stringent requirements applicable to your site and consult your safety officer before modifying any testing SOP.</p>
+      <p>This calculator was developed by <strong>Blackline Safety</strong> in collaboration with Nevada Nano, manufacturer of the LEL MPS sensor. It reflects Blackline Safety's point of view on the relationship between sensor diagnostic capability and maintenance interval design.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-logo"><span>blackline</span><span>safety</span></div>
+  <div class="footer-note">For internal use and customer discussion. Not a compliance document. &copy; Blackline Safety 2026.</div>
+</footer>
+
+<script>
+  // ── TOGGLE HELPERS ──
+  function toggleSection(id, btn) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+    btn.classList.toggle('active');
+  }
+
+  function toggleMethodology() {
+    const body = document.getElementById('methodologyBody');
+    const label = document.getElementById('methToggleLabel');
+    body.classList.toggle('open');
+    label.innerHTML = body.classList.contains('open')
+      ? 'Hide <span style="font-size:10px;margin-left:4px;">&#9650;</span>'
+      : 'Show <span style="font-size:10px;margin-left:4px;">&#9660;</span>';
+  }
+
+  // Working days custom field
+  document.getElementById('workingDays').addEventListener('change', function() {
+    const custom = document.getElementById('customDaysField');
+    custom.style.display = this.value === 'custom' ? 'block' : 'none';
+    calculate();
+  });
+
+  // ── FORMAT HELPERS ──
+  function fmt(n) {
+    if (n === null || n === undefined || isNaN(n)) return '-';
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+  function fmtN(n, decimals = 0) {
+    if (n === null || n === undefined || isNaN(n)) return '-';
+    return Math.round(n).toLocaleString('en-US');
+  }
+  function fmtL(n) {
+    if (!n) return '-';
+    return Math.round(n).toLocaleString('en-US') + ' L';
+  }
+  function getVal(id, fallback = 0) {
+    const v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? fallback : v;
+  }
+
+  // ── CORE CALCULATION ──
+  function calculate() {
+    const devices      = getVal('devices', 0);
+    const wdSel        = document.getElementById('workingDays').value;
+    const workingDays  = wdSel === 'custom' ? getVal('customDays', 220) : parseFloat(wdSel);
+    const currentBump  = getVal('currentBump', 1);   // interval in days
+    const currentCal   = getVal('currentCal', 30);   // interval in days
+    const cylSize      = getVal('cylinderSize', 0);
+    const cylCost      = getVal('cylinderCost', 0);
+    const gasPerBump   = getVal('gasPerBump', 0.5) || 0.5;
+    const timePerTest  = getVal('timePerTest', 0);  // minutes
+    const hourlyRate   = getVal('hourlyRate', 0);
+    const cylEff       = parseFloat(document.getElementById('cylinderEff').value);
+    const retestRate   = parseFloat(document.getElementById('retestRate').value);
+    const csPerWeek    = getVal('confinedSpace', 0);
+
+    // Gate: need enough data to show results
+    const hasData = devices > 0 && cylSize > 0 && cylCost > 0 && timePerTest > 0 && hourlyRate > 0;
+    document.getElementById('results').style.display = hasData ? 'block' : 'none';
+    if (!hasData) return;
+
+    // Derived
+    const usableGasPerCyl  = cylSize * cylEff;
+    const gasPerCal        = gasPerBump * 3;         // cals use 3x gas
+    const costPerLitre     = cylCost / usableGasPerCyl;
+    const labourPerTestMin = timePerTest * (1 + retestRate);
+    const labourPerTestHr  = labourPerTestMin / 60;
+    const labourPerTest    = labourPerTestHr * hourlyRate;
+    const csWeeks          = workingDays / 5;
+    const csTotalTests     = csPerWeek * csWeeks * devices;
+
+    // ── SCENARIO A: Current regime ──
+    const sBumpsPerDevice  = workingDays / currentBump;
+    const sCalsPerDevice   = workingDays / currentCal;
+    const sBumpFleet       = sBumpsPerDevice * devices;
+    const sCalFleet        = sCalsPerDevice  * devices;
+    const sGasTotal        = (sBumpFleet * gasPerBump) + (sCalFleet * gasPerCal) + (csTotalTests * gasPerBump);
+    const sGasCostVal      = sGasTotal * costPerLitre;
+    const sLabourCostVal   = (sBumpFleet + sCalFleet) * labourPerTest;
+    const sCsCostVal       = csTotalTests * labourPerTest + (csTotalTests * gasPerBump * costPerLitre);
+    const sTotalVal        = sGasCostVal + sLabourCostVal + sCsCostVal;
+
+    // ── SCENARIO B: Risk-calibrated (30-day bump, 180-day cal) ──
+    const altBumpInterval  = 30;
+    const altCalInterval   = 180;
+    const aBumpsPerDevice  = workingDays / altBumpInterval;
+    const aCalsPerDevice   = workingDays / altCalInterval;
+    const aBumpFleet       = aBumpsPerDevice * devices;
+    const aCalFleet        = aCalsPerDevice  * devices;
+    const aGasTotal        = (aBumpFleet * gasPerBump) + (aCalFleet * gasPerCal) + (csTotalTests * gasPerBump);
+    const aGasCostVal      = aGasTotal * costPerLitre;
+    const aLabourCostVal   = (aBumpFleet + aCalFleet) * labourPerTest;
+    const aCsCostVal       = sCsCostVal; // same confined space costs in both scenarios
+    const aTotalVal        = aGasCostVal + aLabourCostVal + aCsCostVal;
+
+    // ── POPULATE A ──
+    document.getElementById('sBumpTests').textContent   = fmtN(sBumpFleet);
+    document.getElementById('sCalTests').textContent    = fmtN(sCalFleet);
+    document.getElementById('sTotalGas').textContent    = fmtL(sGasTotal);
+    document.getElementById('sGasCost').textContent     = fmt(sGasCostVal);
+    document.getElementById('sLabourCost').textContent  = fmt(sLabourCostVal);
+    document.getElementById('sCSCost').textContent      = csPerWeek > 0 ? fmt(sCsCostVal) : 'N/A';
+    document.getElementById('sTotal').textContent       = fmt(sTotalVal);
+
+    // ── POPULATE B ──
+    document.getElementById('aBumpTests').textContent   = fmtN(aBumpFleet);
+    document.getElementById('aCalTests').textContent    = fmtN(aCalFleet);
+    document.getElementById('aTotalGas').textContent    = fmtL(aGasTotal);
+    document.getElementById('aGasCost').textContent     = fmt(aGasCostVal);
+    document.getElementById('aLabourCost').textContent  = fmt(aLabourCostVal);
+    document.getElementById('aCSCost').textContent      = csPerWeek > 0 ? fmt(aCsCostVal) : 'N/A';
+    document.getElementById('aTotal').textContent       = fmt(aTotalVal);
+
+    // ── CURRENT INTERVAL LABEL ──
+    const bumpLabels = {1:'Daily',2:'Every 2 days',3:'Every 3 days',7:'Weekly',14:'Every 2 weeks',30:'Monthly'};
+    const calLabels  = {1:'daily cal',7:'weekly cal',14:'2-week cal',30:'30-day cal',60:'60-day cal',90:'90-day cal',180:'180-day cal'};
+    const bLabel = bumpLabels[currentBump] || (currentBump + '-day bump');
+    const cLabel = calLabels[currentCal]   || (currentCal + '-day cal');
+    document.getElementById('currentIntervalLabel').textContent = bLabel + ' / ' + cLabel;
+
+    // ── SAVING BANNER ──
+    const saving       = sTotalVal - aTotalVal;
+    const savingGasVal = sGasCostVal - aGasCostVal;
+    const savingLab    = sLabourCostVal - aLabourCostVal;
+    const savingTests  = (sBumpFleet + sCalFleet) - (aBumpFleet + aCalFleet);
+    const savingHrs    = savingTests * labourPerTestHr;
+
+    const banner = document.getElementById('savingBanner');
+    banner.classList.add('visible');
+
+    const negNote = document.getElementById('savingNegative');
+    if (saving < 0) {
+      document.getElementById('savingAmount').textContent = fmt(Math.abs(saving)) + ' additional cost';
+      document.getElementById('savingAmount').style.color = '#FFB3A0';
+      negNote.style.display = 'block';
+      negNote.textContent = 'Your current regime is already at or near the risk-calibrated interval. The alternative scenario costs more in this configuration. Review your inputs or consult the methodology notes.';
+      banner.querySelector('.saving-banner-header').style.background = '#7A3820';
+    } else {
+      document.getElementById('savingAmount').textContent = fmt(saving);
+      document.getElementById('savingAmount').style.color = 'white';
+      negNote.style.display = 'none';
+      banner.querySelector('.saving-banner-header').style.background = 'var(--green)';
+    }
+
+    const pct = sTotalVal > 0 ? Math.round((saving / sTotalVal) * 100) : 0;
+    document.getElementById('savingSubtext').textContent = 'Estimated ' + pct + '% reduction in annual testing costs across ' + fmtN(devices) + ' device' + (devices !== 1 ? 's' : '');
+    document.getElementById('savingGas').textContent   = fmt(savingGasVal);
+    document.getElementById('savingLabour').textContent = fmt(savingLab);
+    document.getElementById('savingTests').textContent  = fmtN(savingTests) + ' fewer tests/yr';
+    document.getElementById('savingHours').textContent  = Math.round(savingHrs) + ' hrs/yr';
+
+    // Animate results in
+    document.getElementById('results').classList.add('animate-in');
+  }
+</script>
+</body>
+</html>
