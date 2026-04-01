@@ -305,19 +305,19 @@
           </div>
         </div>
         <div class="field">
-          <label class="field-label">Cylinder Cost <span class="tip-icon" data-tip="Total cost of one cylinder including delivery. Many organisations underestimate this: check your supplier invoice, not just the list price.">?</span></label>
+          <label class="field-label">Cylinder Cost <span class="tip-icon" data-tip="Total cost of one cylinder including delivery. Multi-gas blend cylinders (LEL, O2, H2S, CO) typically cost significantly more than single-gas cylinders of the same volume. Check your supplier invoice, not just the list price.">?</span></label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
             <input type="number" id="cylinderCost" min="0" placeholder="e.g. 85" class="has-prefix" oninput="calculate()">
           </div>
         </div>
         <div class="field">
-          <label class="field-label">Gas Per Bump Test <span class="tip-icon" data-tip="Volume consumed per bump test. 0.5L is a reasonable default based on a 30-second flow at a typical regulator rate. Calibrations are calculated at 3x this volume.">?</span></label>
+          <label class="field-label">Gas Per Bump Test <span class="tip-icon" data-tip="Volume consumed per bump test. 0.8L is the default, reflecting a typical four-gas monitor (LEL, O2, H2S, CO) on a standard bump procedure. Single-gas devices typically consume 0.4 to 0.6L. Calibrations are calculated separately using the calibration gas multiplier in Advanced Assumptions.">?</span></label>
           <div class="input-wrap">
-            <input type="number" id="gasPerBump" min="0.1" step="0.1" placeholder="0.5" class="has-suffix" oninput="calculate()">
+            <input type="number" id="gasPerBump" min="0.1" step="0.1" placeholder="0.8" class="has-suffix" oninput="calculate()">
             <span class="input-suffix">L</span>
           </div>
-          <div class="field-default">Default: 0.5L per bump test</div>
+          <div class="field-default">Default: 0.8L per bump test (four-gas monitor)</div>
         </div>
       </div>
     </div>
@@ -332,7 +332,7 @@
     <div class="card-body">
       <div class="input-grid two-col">
         <div class="field">
-          <label class="field-label">Time Per Test Event <span class="tip-icon" data-tip="Total minutes per test event including setup, the test itself, device logging, and any downtime. Typically 8–15 minutes per device manually, less with a docking station.">?</span></label>
+          <label class="field-label">Time Per Test Event <span class="tip-icon" data-tip="Total minutes per test event including setup, the test itself, device logging, and any downtime. Four-gas monitors tested manually typically require 12 to 20 minutes per device, as the technician must verify all sensors have responded and log multiple readings. Single-gas devices or docking station processes are typically 5 to 10 minutes.">?</span></label>
           <div class="input-wrap">
             <input type="number" id="timePerTest" min="1" placeholder="e.g. 10" class="has-suffix" oninput="calculate()">
             <span class="input-suffix">min</span>
@@ -456,7 +456,7 @@
         <!-- ELIGIBLE DEVICES -->
         <div style="padding-top:16px;border-top:1px solid var(--border);margin-bottom:20px">
           <div class="field">
-            <label class="field-label">Devices Eligible for Extended Intervals <span class="tip-icon" data-tip="Enter the number of devices in roles where extended intervals would apply if you moved to MPS sensor technology. Exclude devices in confined space entry, IDLH environments, emergency response, or any role where site rules mandate daily testing. Ineligible devices stay on current intervals in both scenarios and do not affect the saving.">?</span></label>
+            <label class="field-label">Devices Eligible for Extended Intervals <span class="tip-icon" data-tip="Enter the number of devices where extended intervals would apply if you moved to MPS sensor technology. In four-gas monitors, the LEL sensor is the primary driver of bump test and calibration frequency; replacing it with MPS changes the governing constraint for the whole device. Exclude devices in confined space entry, IDLH environments, emergency response, environments requiring hydrogen detection, or any role where site rules mandate daily testing.">?</span></label>
             <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:4px">
               <div class="input-wrap" style="max-width:180px">
                 <input type="number" id="eligibleDevices" min="0" placeholder="e.g. 80" oninput="calculate()">
@@ -471,14 +471,14 @@
         </div>
 
         <div class="adjust-note">
-          Maximum intervals reflect manufacturer-validated performance data for LEL MPS sensors in low-to-medium risk diffused applications. These intervals do not apply to confined space entry, IDLH environments, sites where sensor poisons are present, or where regulations mandate more frequent testing. If in doubt, maintain conservative intervals.
+          Maximum intervals reflect manufacturer-validated performance data for LEL MPS sensors in low-to-medium risk diffused applications. In standard four-gas monitors, the LEL sensor is the primary driver of bump test and calibration frequency; MPS technology removes the silent-failure risk that makes daily testing necessary for catalytic bead sensors. These intervals do not apply to confined space entry, IDLH environments, sites where sensor poisons are present, environments where hydrogen detection is required (NDIR sensors cannot detect hydrogen), or where regulations mandate more frequent testing. If in doubt, maintain conservative intervals.
         </div>
 
         <!-- ADVANCED ASSUMPTIONS -->
         <div class="sub-section-title" style="margin-top:24px">Advanced Assumptions</div>
 
         <!-- Row 1: Gas and retest model assumptions -->
-        <div class="input-grid two-col" style="margin-bottom:16px">
+        <div class="input-grid three-col" style="margin-bottom:16px">
           <div class="field">
             <label class="field-label">Cylinder Efficiency <span class="tip-icon" data-tip="Gas lost during connection and purge, plus residual gas that cannot be extracted when pressure drops below the regulator's operating threshold. Industry norm is 80 to 90%.">?</span></label>
             <select id="cylinderEff" onchange="calculate()">
@@ -487,6 +487,14 @@
               <option value="0.80">80%: Manual connections, some waste</option>
               <option value="0.75">75%: Older equipment, higher waste</option>
             </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Calibration Gas Multiplier <span class="tip-icon" data-tip="How much more gas a calibration event uses compared to a bump test. Four-gas monitors (LEL, O2, H2S, CO) typically fall between 3.5x and 5x due to longer procedure time and multi-sensor exposure requirements. Single-gas devices are typically 2x to 3x. Increase this value if your calibration procedure includes sensor stabilisation time or sequential passes per sensor.">?</span></label>
+            <div class="input-wrap">
+              <input type="number" id="calMult" min="1" max="8" step="0.5" placeholder="4" class="has-suffix" oninput="calculate()">
+              <span class="input-suffix">x</span>
+            </div>
+            <div class="field-default">Default: 4x (four-gas monitor)</div>
           </div>
           <div class="field">
             <label class="field-label">Retest Rate <span class="tip-icon" data-tip="Percentage of tests requiring a retest due to a device failing or an inconclusive result. Each retest consumes additional gas and technician time. Default is 0% for well-maintained fleets.">?</span></label>
@@ -540,8 +548,10 @@
       <p>Confined space entry frequency is similarly calendar-based. The calculator uses 52 fixed weeks per year for confined space cost, not a derived working-week count.</p>
       <h4>Cylinder Efficiency Factor</h4>
       <p>Cylinders are never fully exhausted in practice. Gas is lost during regulator connection and purging (typically 0.1–0.3L per connection event), and residual gas cannot be extracted once cylinder pressure drops below the regulator's minimum operating threshold (approximately 10–15% of cylinder volume). The efficiency factor, defaulted to 85%, adjusts the usable cylinder volume to reflect real-world conditions rather than theoretical capacity.</p>
-      <h4>Calibration Gas Volume Ratio</h4>
-      <p>Full calibration events consume more gas than bump tests due to the longer exposure time required to establish an accurate reference point. The calculator applies a <strong>3x multiplier</strong> to the bump test gas volume for calibration events. This is a conservative estimate; actual consumption depends on your regulator flow rate, device sensor count, and calibration procedure duration.</p>
+      <h4>Calibration Gas Volume</h4>
+      <p>Full calibration events consume more gas than bump tests. The calibration gas multiplier, set in the Advanced Assumptions section, controls this ratio. The default is <strong>4x</strong>, reflecting a typical four-gas monitor (LEL, O2, H2S, CO) where all sensors are exposed during a single calibration event. This figure is higher than for single-gas devices because the procedure is longer and requires adequate sensor response across multiple gas types.</p>
+      <p>In standard four-gas monitors, the LEL sensor is the primary driver of bump test and calibration frequency. The catalytic bead LEL sensor can be poisoned by silicones, sulphur compounds, and halogens, and critically it fails silently without alerting the user. This silent-failure risk is the technical basis for the industry-wide daily bump test requirement. MPS sensors do not use a catalyst and cannot be poisoned, removing this failure mode and changing the technical basis for the interval. The O2, H2S, and CO sensors in a four-gas monitor use electrochemical technology that drifts predictably and fails with an alarm signal rather than silently, meaning they do not drive the interval frequency in the same way.</p>
+      <p>Single-gas devices or organisations with primarily single-sensor fleets should reduce the calibration multiplier to 2x to 3x. Multi-gas devices with longer stabilisation procedures may be at 4.5x to 5x or higher. The field accepts one decimal place to allow precise adjustment.</p>
       <h4>Confined Space Pre-Entry Testing</h4>
       <p>Confined space pre-entry bump testing is a regulatory requirement in most jurisdictions regardless of sensor type or testing interval. This calculator models confined space testing as a <strong>site-level cost</strong> based on the number of entry events per week and the number of devices used per entry (crew size), applied across 52 calendar weeks per year. This cost is added equally to both scenarios; it does not influence the saving calculation but produces a more accurate total cost picture for sites where confined space work is a regular activity.</p>
       <h4>Eligible Devices and Fleet Composition</h4>
@@ -553,6 +563,7 @@
         <span class="tag exc">Post under-limit event testing</span>
         <span class="tag exc">Emergency response testing</span>
         <span class="tag exc">Post-incident return-to-service</span>
+        <span class="tag exc">Hydrogen detection environments (NDIR sensors cannot detect hydrogen)</span>
       </div>
       <p style="margin-top:14px">A calculator that claims to model everything invites challenge. One that clearly defines its scope invites trust.</p>
       <h4>What Is Included</h4>
@@ -684,7 +695,7 @@
 
   // ── RESET ──
   function resetAll() {
-    ['devices','customDays','cylinderSize','cylinderCost','gasPerBump','timePerTest',
+    ['devices','customDays','cylinderSize','cylinderCost','gasPerBump','calMult','timePerTest',
      'hourlyRate','confinedSpace','devicesPerCS','eligibleDevices']
       .forEach(id => document.getElementById(id).value = '');
     document.getElementById('workingDays').value = '220';
@@ -716,10 +727,11 @@
     const curCal      = gv('currentCal', 30);
     const cylSz       = gv('cylinderSize');
     const cylCost     = gv('cylinderCost');
-    const gpb         = gv('gasPerBump') || 0.5;
+    const gpb         = gv('gasPerBump') || 0.8;
     const tpt         = gv('timePerTest');
     const hr          = gv('hourlyRate');
     const cylEff      = parseFloat(document.getElementById('cylinderEff').value);
+    const calMult     = gv('calMult') || 4;
     const retest      = parseFloat(document.getElementById('retestRate').value);
     const csWk        = gv('confinedSpace');
     const dpcs        = gv('devicesPerCS') || 1;
@@ -751,8 +763,8 @@
 
     // Derived
     const usable   = cylSz * cylEff;
-    const gpc      = gpb * 3;                         // gas per calibration
-    const cpl      = cylCost / usable;                // cost per litre
+    const gpc      = gpb * calMult;                    // gas per calibration (user-adjustable multiplier)
+    const cpl      = cylCost / usable;                 // cost per litre
     const labMin   = tpt * (1 + retest);
     const labHr    = labMin / 60;
     const labCost  = labHr * hr;
