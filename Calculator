@@ -534,12 +534,16 @@
       <h4>What This Calculator Models</h4>
       <p>This calculator models the <strong>annual cost of routine interval-based bump testing and calibration</strong> for a portable gas detection fleet. It compares your current testing regime against a risk-calibrated alternative based on the maintenance intervals validated for LEL MPS sensor technology: up to 30-day bump test intervals and up to 180-day calibration intervals under appropriate conditions.</p>
       <p>Costs are calculated across two dimensions: <strong>calibration gas consumption</strong> (cylinder volume, cost, and efficiency-adjusted usable volume per test) and <strong>technician labour</strong> (time per test event multiplied by fully-loaded hourly rate). Both dimensions are applied across the full fleet for the selected annual working period.</p>
+      <h4>Working Days versus Calendar Days</h4>
+      <p>Bump test frequency and calibration frequency are treated on different time bases, because they operate differently in practice. Bump tests are typically performed at shift start, so they follow working days: a daily bump test means one test per working day, and the annual count is driven by how many days per year the site operates. The working days input controls this directly.</p>
+      <p>Calibration intervals, by contrast, are always defined in calendar days in every regulatory framework and industry SOP this calculator is designed to support. A 30-day calibration interval means every 30 calendar days regardless of how many of those are working days. The calculator therefore computes annual calibrations as 365 divided by the calibration interval, independent of the working days input. The working days input affects bump test frequency and labour cost only.</p>
+      <p>Confined space entry frequency is similarly calendar-based. The calculator uses 52 fixed weeks per year for confined space cost, not a derived working-week count.</p>
       <h4>Cylinder Efficiency Factor</h4>
       <p>Cylinders are never fully exhausted in practice. Gas is lost during regulator connection and purging (typically 0.1–0.3L per connection event), and residual gas cannot be extracted once cylinder pressure drops below the regulator's minimum operating threshold (approximately 10–15% of cylinder volume). The efficiency factor, defaulted to 85%, adjusts the usable cylinder volume to reflect real-world conditions rather than theoretical capacity.</p>
       <h4>Calibration Gas Volume Ratio</h4>
       <p>Full calibration events consume more gas than bump tests due to the longer exposure time required to establish an accurate reference point. The calculator applies a <strong>3x multiplier</strong> to the bump test gas volume for calibration events. This is a conservative estimate; actual consumption depends on your regulator flow rate, device sensor count, and calibration procedure duration.</p>
       <h4>Confined Space Pre-Entry Testing</h4>
-      <p>Confined space pre-entry bump testing is a regulatory requirement in most jurisdictions regardless of sensor type or testing interval. This calculator models confined space testing as a <strong>site-level cost</strong> based on the number of entry events per week and the number of devices used per entry (crew size). This cost is added equally to both scenarios; it does not influence the saving calculation but produces a more accurate total cost picture for sites where confined space work is a regular activity.</p>
+      <p>Confined space pre-entry bump testing is a regulatory requirement in most jurisdictions regardless of sensor type or testing interval. This calculator models confined space testing as a <strong>site-level cost</strong> based on the number of entry events per week and the number of devices used per entry (crew size), applied across 52 calendar weeks per year. This cost is added equally to both scenarios; it does not influence the saving calculation but produces a more accurate total cost picture for sites where confined space work is a regular activity.</p>
       <h4>Eligible Devices and Fleet Composition</h4>
       <p>Scenario B applies the alternative intervals to your entire fleet by default. If you enter a number in the <strong>Devices Eligible for Extended Intervals</strong> field, Scenario B applies the alternative intervals only to those devices. The remaining devices are modelled on your current Scenario A intervals in both scenarios; meaning they contribute equally to both totals and do not distort the saving calculation. The saving reflects only the devices that would genuinely benefit from the technology shift.</p>
       <h4>What Is Excluded</h4>
@@ -752,11 +756,14 @@
     const labMin   = tpt * (1 + retest);
     const labHr    = labMin / 60;
     const labCost  = labHr * hr;
-    const csTests  = csWk * (wd / 5) * dpcs;
+    // Confined space: calendar-based (52 fixed weeks), site-level via crew size
+    const csTests  = csWk * 52 * dpcs;
 
     // SCENARIO A: full fleet, current intervals
+    // Bump tests: working-day basis (SOPs tied to shift starts)
+    // Calibrations: calendar-day basis (regulatory intervals are always calendar days)
     const sBpd = wd / curBump;
-    const sCpd = wd / curCal;
+    const sCpd = 365 / curCal;
     const sBF  = sBpd * devices;
     const sCF  = sCpd * devices;
     const sGas = (sBF * gpb) + (sCF * gpc);
@@ -768,8 +775,9 @@
     const sT   = sGC + sLC + csC;
 
     // SCENARIO B: eligible on alt intervals, ineligible on current
+    // Bump: working-day basis. Calibration: calendar-day basis.
     const aBpd    = wd / altBump;
-    const aCpd    = wd / altCal;
+    const aCpd    = 365 / altCal;
     const aBFe    = aBpd * eligDev;   const aCFe = aCpd * eligDev;
     const aBFi    = sBpd * ineligDev; const aCFi = sCpd * ineligDev;
     const aBF     = aBFe + aBFi;      const aCF  = aCFe + aCFi;
