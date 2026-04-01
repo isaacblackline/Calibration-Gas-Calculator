@@ -741,8 +741,11 @@
 
     const d = MODES[mode === 'mixed' ? 'manual' : mode];
 
-    // Always set cylEff: it lives in a hidden panel and the user cannot set it directly
-    document.getElementById('cylinderEff').value = String(d.cylEff);
+    // Always set cylEff for manual and docked: it lives in a hidden panel
+    // For mixed mode, do not set it: the calculation uses a weighted average
+    if (mode !== 'mixed') {
+      document.getElementById('cylinderEff').value = String(d.cylEff);
+    }
 
     // Set gpb and calMult only if the user has not already entered a value
     const gpbEl = document.getElementById('gasPerBump');
@@ -884,9 +887,13 @@
       gpb     = gv('gasPerBump')  || (dD.gpb         * wDoc + dM.gpb         * wMan);
       calMult = gv('calMult')     || (dD.calMult      * wDoc + dM.calMult     * wMan);
       tpt     = gv('timePerTest') || (dD.tptFallback  * wDoc + dM.tptFallback * wMan);
-      // cylEff: read from select with fallback to mode-weighted default
+      // cylEff: weighted average is the base for mixed mode.
+      // Only use the select value if the user has explicitly changed it from both mode defaults
+      // (i.e. it is not equal to either the docked or manual default).
+      const cylEffWeighted = dD.cylEff * wDoc + dM.cylEff * wMan;
       const rawEff = parseFloat(document.getElementById('cylinderEff').value);
-      cylEff = isNaN(rawEff) ? (dD.cylEff * wDoc + dM.cylEff * wMan) : rawEff;
+      const userOverrode = !isNaN(rawEff) && rawEff !== dD.cylEff && rawEff !== dM.cylEff;
+      cylEff = userOverrode ? rawEff : cylEffWeighted;
     } else {
       const d  = MODES[mode];
       gpb      = gv('gasPerBump')  || d.gpb;
