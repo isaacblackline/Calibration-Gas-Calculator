@@ -62,9 +62,7 @@
   .input-grid { display:grid; gap:18px; }
   .two-col { grid-template-columns:1fr 1fr; }
   .three-col { grid-template-columns:1fr 1fr 1fr; }
-  .four-col { grid-template-columns:1fr 1fr 1fr 1fr; }
-  @media(max-width:700px){ .two-col,.three-col,.four-col{ grid-template-columns:1fr; } }
-  @media(max-width:900px){ .four-col{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:700px){ .two-col,.three-col{ grid-template-columns:1fr; } }
 
   .field { display:flex; flex-direction:column; gap:6px; }
   .field-label { font-size:12px; font-weight:600; color:var(--slate); letter-spacing:0.2px; display:inline-flex; align-items:center; gap:5px; }
@@ -478,34 +476,40 @@
 
         <!-- ADVANCED ASSUMPTIONS -->
         <div class="sub-section-title" style="margin-top:24px">Advanced Assumptions</div>
-        <div class="input-grid four-col">
+
+        <!-- Row 1: Gas and retest model assumptions -->
+        <div class="input-grid two-col" style="margin-bottom:16px">
           <div class="field">
-            <label class="field-label">Cylinder Efficiency <span class="tip-icon" data-tip="Gas lost during connection and purge, plus residual gas that cannot be extracted when pressure drops below the regulator's operating threshold. Industry norm is 80–90%.">?</span></label>
+            <label class="field-label">Cylinder Efficiency <span class="tip-icon" data-tip="Gas lost during connection and purge, plus residual gas that cannot be extracted when pressure drops below the regulator's operating threshold. Industry norm is 80 to 90%.">?</span></label>
             <select id="cylinderEff" onchange="calculate()">
-              <option value="0.90">90%: Docking station</option>
+              <option value="0.90">90%: Docking station, minimal loss</option>
               <option value="0.85" selected>85%: Standard (default)</option>
               <option value="0.80">80%: Manual connections, some waste</option>
-              <option value="0.75">75%: Older equipment</option>
+              <option value="0.75">75%: Older equipment, higher waste</option>
             </select>
           </div>
           <div class="field">
             <label class="field-label">Retest Rate <span class="tip-icon" data-tip="Percentage of tests requiring a retest due to a device failing or an inconclusive result. Each retest consumes additional gas and technician time. Default is 0% for well-maintained fleets.">?</span></label>
             <select id="retestRate" onchange="calculate()">
-              <option value="0" selected>0%: No retests</option>
+              <option value="0" selected>0%: No retests assumed</option>
               <option value="0.02">2%: Low retest rate</option>
               <option value="0.05">5%: Moderate retest rate</option>
               <option value="0.10">10%: High retest rate</option>
             </select>
           </div>
+        </div>
+
+        <!-- Row 2: Confined space entry assumptions -->
+        <div class="input-grid two-col">
           <div class="field">
             <label class="field-label">Confined Space Entries / Week <span class="tip-icon" data-tip="Number of confined space entry events at your site per week. A bump test before each entry is required by regulation regardless of sensor type. This adds a fixed cost to both scenarios equally; it does not affect the saving calculation.">?</span></label>
             <input type="number" id="confinedSpace" min="0" placeholder="0" oninput="calculate()">
             <div class="field-default">0 = not applicable</div>
           </div>
           <div class="field">
-            <label class="field-label">Devices Per Confined Space Entry <span class="tip-icon" data-tip="How many devices are used per confined space entry event, i.e. the crew size,. Keeps confined space cost at a site-event level rather than fleet-wide.">?</span></label>
+            <label class="field-label">Devices Per Confined Space Entry <span class="tip-icon" data-tip="How many devices are used per confined space entry event, i.e. the crew size. Keeps confined space cost at a site-event level rather than fleet-wide.">?</span></label>
             <input type="number" id="devicesPerCS" min="1" placeholder="e.g. 3" oninput="calculate()">
-            <div class="field-default">Typical crew: 2–5 devices</div>
+            <div class="field-default">Typical crew: 2 to 5 devices</div>
           </div>
         </div>
 
