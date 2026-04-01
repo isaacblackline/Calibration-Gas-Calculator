@@ -194,6 +194,105 @@
   .toggle-content { display: none; padding-top: 20px; }
   .toggle-content.open { display: block; }
 
+  /* ── SCENARIO B SLIDERS ── */
+  .scenario-b-card {
+    background: var(--white);
+    border: 1.5px solid var(--red);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .scenario-b-header {
+    background: var(--red);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .scenario-b-header-left { }
+  .scenario-b-eyebrow { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.65); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .scenario-b-title { font-size: 14px; font-weight: 600; color: white; }
+  .scenario-b-body { padding: 24px; }
+  .scenario-b-note {
+    margin-top: 16px;
+    padding: 10px 14px;
+    background: var(--red-light);
+    border-left: 3px solid var(--red);
+    border-radius: var(--radius);
+    font-size: 11px;
+    color: #6B2030;
+    line-height: 1.5;
+  }
+
+  .slider-field { display: flex; flex-direction: column; gap: 10px; }
+  .slider-header { display: flex; align-items: baseline; justify-content: space-between; }
+  .slider-label { font-size: 12px; font-weight: 600; color: var(--slate); }
+  .slider-value-display {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--red);
+  }
+  .slider-value-unit { font-size: 12px; color: var(--mid); margin-left: 2px; }
+  .slider-track-wrap { position: relative; padding: 4px 0; }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--red);
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 0 0 1.5px var(--red), 0 2px 6px rgba(196,18,48,0.3);
+    transition: box-shadow 0.15s;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--red);
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 0 0 1.5px var(--red), 0 2px 6px rgba(196,18,48,0.3);
+  }
+  input[type="range"]::-webkit-slider-runnable-track { border-radius: 2px; }
+  input[type="range"]:focus::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(196,18,48,0.2); }
+
+  .slider-endpoints {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+  }
+  .slider-endpoint { font-size: 10px; color: var(--mid); }
+  .slider-endpoint.max { color: var(--slate); font-weight: 600; }
+
+  .same-interval-warning {
+    display: none;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--amber-light);
+    border-left: 3px solid var(--amber);
+    border-radius: var(--radius);
+    font-size: 11px;
+    color: var(--amber);
+  }
+  .same-interval-warning.visible { display: block; }
+
   .results-section { margin-top: 32px; }
   .scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   @media (max-width: 640px) { .scenario-grid { grid-template-columns: 1fr; } }
@@ -548,6 +647,90 @@
     </div>
   </div>
 
+  <!-- SCENARIO B SLIDER CARD -->
+  <div class="scenario-b-card" style="margin-top: 24px;">
+    <div class="scenario-b-header">
+      <div class="scenario-b-header-left">
+        <div class="scenario-b-eyebrow">Scenario B — Risk-Calibrated Alternative</div>
+        <div class="scenario-b-title">Set your alternative testing intervals</div>
+      </div>
+    </div>
+    <div class="scenario-b-body">
+      <div class="input-grid two-col">
+
+        <div class="slider-field">
+          <div class="slider-header">
+            <label class="slider-label tooltip-wrap">
+              Alternative Bump Test Interval
+              <span class="tooltip-icon">?<span class="tooltip-text">Drag to model a more conservative or fully risk-calibrated alternative. 30 days is the manufacturer-validated ceiling for LEL MPS sensors in low-to-medium risk diffused applications.</span></span>
+            </label>
+            <div>
+              <span class="slider-value-display" id="altBumpDisplay">30</span>
+              <span class="slider-value-unit">days</span>
+            </div>
+          </div>
+          <div class="slider-track-wrap">
+            <input type="range" id="altBumpSlider" min="1" max="30" value="30" step="1" oninput="onSliderChange()">
+          </div>
+          <div class="slider-endpoints">
+            <span class="slider-endpoint">1 day (daily)</span>
+            <span class="slider-endpoint max">30 days — validated ceiling</span>
+          </div>
+          <div class="same-interval-warning" id="bumpSameWarning">
+            This matches your current bump test interval — no saving on this dimension.
+          </div>
+        </div>
+
+        <div class="slider-field">
+          <div class="slider-header">
+            <label class="slider-label tooltip-wrap">
+              Alternative Calibration Interval
+              <span class="tooltip-icon">?<span class="tooltip-text">Drag to model a phased or fully risk-calibrated calibration interval. 180 days is the manufacturer-validated ceiling for LEL MPS sensors. Minimum is set at 30 days — calibrating less frequently than bump testing is not operationally sound.</span></span>
+            </label>
+            <div>
+              <span class="slider-value-display" id="altCalDisplay">180</span>
+              <span class="slider-value-unit">days</span>
+            </div>
+          </div>
+          <div class="slider-track-wrap">
+            <input type="range" id="altCalSlider" min="30" max="180" value="180" step="1" oninput="onSliderChange()">
+          </div>
+          <div class="slider-endpoints">
+            <span class="slider-endpoint">30 days</span>
+            <span class="slider-endpoint max">180 days — validated ceiling</span>
+          </div>
+          <div class="same-interval-warning" id="calSameWarning">
+            This matches your current calibration interval — no saving on this dimension.
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+        <div class="field">
+          <label class="field-label tooltip-wrap">
+            Devices Eligible for Extended Intervals
+            <span class="tooltip-icon">?<span class="tooltip-text">Enter the number of devices in roles where extended intervals would apply if you moved to MPS sensor technology. Exclude any device used in confined space entry, IDLH-rated environments, emergency response, or any role where site rules or regulations mandate daily testing regardless of sensor type. The remaining devices stay on your current Scenario A intervals in both scenarios.</span></span>
+          </label>
+          <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div class="input-wrap" style="max-width: 180px;">
+              <input type="number" id="eligibleDevices" min="0" placeholder="e.g. 80" oninput="calculate()">
+            </div>
+            <div id="eligibleSplit" style="font-size: 12px; color: var(--mid); display: none;">
+              <span id="eligibleCount" style="font-weight: 600; color: var(--slate);"></span> on extended intervals &nbsp;·&nbsp;
+              <span id="ineligibleCount" style="font-weight: 600; color: var(--slate);"></span> remain on current regime
+            </div>
+          </div>
+          <div class="field-default">Leave blank to apply extended intervals to your full fleet</div>
+        </div>
+      </div>
+
+      <div class="scenario-b-note" style="margin-top: 16px;">
+        Maximum intervals reflect manufacturer-validated performance data for LEL MPS sensors in low-to-medium risk diffused applications. These intervals do not apply to confined space entry, IDLH environments, sites where sensor poisons are present, or where regulations mandate more frequent testing. If in doubt, maintain conservative intervals.
+      </div>
+    </div>
+  </div>
+
   <!-- RESULTS -->
   <div class="results-section" id="results" style="display:none;">
     <div class="divider" style="margin: 32px 0 28px;"></div>
@@ -583,7 +766,7 @@
           <div>
             <div class="scenario-label">Scenario B</div>
             <div class="scenario-name">Risk-Calibrated Alternative</div>
-            <div class="scenario-interval">30-day bump / 180-day cal (MPS)</div>
+            <div class="scenario-interval" id="altIntervalLabel">30-day bump / 180-day cal</div>
           </div>
         </div>
         <div class="scenario-body">
@@ -686,7 +869,8 @@
       </div>
 
       <h4>Scenario B: The Risk-Calibrated Alternative</h4>
-      <p>Scenario B applies bump test intervals of up to 30 days and calibration intervals of up to 180 days. These intervals are based on manufacturer-validated performance data for LEL MPS sensors operating in low-to-medium risk diffused applications. They <strong>do not apply</strong> to confined space entry, IDLH environments, sites where sensor poisons are present, multi-gas devices where not all sensors are MPS-type, or any site where regulations or insurance requirements mandate more frequent testing.</p>
+      <p>Scenario B applies the alternative bump test and calibration intervals selected via the sliders. By default these are applied to your entire fleet. If you enter a number in the <strong>Devices Eligible for Extended Intervals</strong> field, Scenario B applies the alternative intervals only to those devices. The remaining devices are modelled on your current Scenario A intervals in both scenarios — meaning they contribute equally to both totals and do not distort the saving calculation. The saving reflects only the devices that would genuinely benefit from the technology shift.</p>
+      <p>The eligible device count is intended to capture devices in roles where extended intervals would apply following a move to MPS sensor technology: general area monitoring, diffused low-to-medium risk industrial applications, and similar duties. It should <strong>exclude</strong> any device used in confined space entry, IDLH-rated environments, emergency response, or any role where site rules or regulations mandate daily testing regardless of sensor type.</p>
 
       <h4>Important Limitations</h4>
       <p>Results are estimates and should be treated as a starting point for internal discussion. Actual savings depend on negotiated gas pricing, specific device and regulator configurations, the mix of sensor types in your fleet, and applicable regulatory requirements in your jurisdiction. This tool does not constitute compliance guidance. Always apply the most stringent requirements applicable to your site and consult your safety officer before modifying any testing SOP.</p>
@@ -721,6 +905,23 @@
     const sel = document.getElementById('workingDays');
     document.getElementById('customDaysField').style.display = sel.value === 'custom' ? 'block' : 'none';
     calculate();
+  }
+
+  // ── SLIDER HANDLER ──
+  function onSliderChange() {
+    const bumpVal = parseInt(document.getElementById('altBumpSlider').value);
+    const calVal  = parseInt(document.getElementById('altCalSlider').value);
+    document.getElementById('altBumpDisplay').textContent = bumpVal;
+    document.getElementById('altCalDisplay').textContent  = calVal;
+    updateSliderTrack('altBumpSlider', 1, 30);
+    updateSliderTrack('altCalSlider', 30, 180);
+    calculate();
+  }
+
+  function updateSliderTrack(id, min, max) {
+    const slider = document.getElementById(id);
+    const pct = ((parseInt(slider.value) - min) / (max - min)) * 100;
+    slider.style.background = `linear-gradient(to right, var(--red) ${pct}%, var(--border) ${pct}%)`;
   }
 
   // ── FORMAT HELPERS ──
@@ -763,21 +964,31 @@
 
   // ── RESET ──
   function resetAll() {
-    document.getElementById('devices').value = '';
-    document.getElementById('workingDays').value = '220';
-    document.getElementById('customDays').value = '';
+    document.getElementById('devices').value        = '';
+    document.getElementById('workingDays').value    = '220';
+    document.getElementById('customDays').value     = '';
     document.getElementById('customDaysField').style.display = 'none';
-    document.getElementById('currentBump').value = '1';
-    document.getElementById('currentCal').value = '30';
-    document.getElementById('cylinderSize').value = '';
-    document.getElementById('cylinderCost').value = '';
-    document.getElementById('gasPerBump').value = '';
-    document.getElementById('timePerTest').value = '';
-    document.getElementById('hourlyRate').value = '';
-    document.getElementById('cylinderEff').value = '0.85';
-    document.getElementById('retestRate').value = '0';
-    document.getElementById('confinedSpace').value = '';
-    document.getElementById('devicesPerCS').value = '';
+    document.getElementById('currentBump').value    = '1';
+    document.getElementById('currentCal').value     = '30';
+    document.getElementById('cylinderSize').value   = '';
+    document.getElementById('cylinderCost').value   = '';
+    document.getElementById('gasPerBump').value     = '';
+    document.getElementById('timePerTest').value    = '';
+    document.getElementById('hourlyRate').value     = '';
+    document.getElementById('cylinderEff').value    = '0.85';
+    document.getElementById('retestRate').value     = '0';
+    document.getElementById('confinedSpace').value  = '';
+    document.getElementById('devicesPerCS').value   = '';
+    document.getElementById('eligibleDevices').value = '';
+    document.getElementById('eligibleSplit').style.display = 'none';
+    document.getElementById('altBumpSlider').value  = '30';
+    document.getElementById('altCalSlider').value   = '180';
+    document.getElementById('altBumpDisplay').textContent = '30';
+    document.getElementById('altCalDisplay').textContent  = '180';
+    updateSliderTrack('altBumpSlider', 1, 30);
+    updateSliderTrack('altCalSlider', 30, 180);
+    document.getElementById('bumpSameWarning').classList.remove('visible');
+    document.getElementById('calSameWarning').classList.remove('visible');
     document.getElementById('results').style.display = 'none';
     document.getElementById('progressNudge').classList.remove('visible');
     document.getElementById('savingBanner').classList.remove('visible');
@@ -786,21 +997,38 @@
 
   // ── CORE CALCULATION ──
   function calculate() {
-    const devices      = getVal('devices', 0);
-    const wdSel        = document.getElementById('workingDays').value;
-    const workingDays  = wdSel === 'custom' ? getVal('customDays', 220) : parseFloat(wdSel);
-    const currentBump  = getVal('currentBump', 1);
-    const currentCal   = getVal('currentCal', 30);
-    const cylSize      = getVal('cylinderSize', 0);
-    const cylCost      = getVal('cylinderCost', 0);
-    const gasPerBump   = getVal('gasPerBump', 0) || 0.5;
-    const timePerTest  = getVal('timePerTest', 0);
-    const hourlyRate   = getVal('hourlyRate', 0);
-    const cylEff       = parseFloat(document.getElementById('cylinderEff').value);
-    const retestRate   = parseFloat(document.getElementById('retestRate').value);
-    // FIX 2: confined space is now site-level events × devices per entry
-    const csPerWeek    = getVal('confinedSpace', 0);
-    const devicesPerCS = getVal('devicesPerCS', 0) || 1;
+    const devices       = getVal('devices', 0);
+    const wdSel         = document.getElementById('workingDays').value;
+    const workingDays   = wdSel === 'custom' ? getVal('customDays', 220) : parseFloat(wdSel);
+    const currentBump   = getVal('currentBump', 1);
+    const currentCal    = getVal('currentCal', 30);
+    const cylSize       = getVal('cylinderSize', 0);
+    const cylCost       = getVal('cylinderCost', 0);
+    const gasPerBump    = getVal('gasPerBump', 0) || 0.5;
+    const timePerTest   = getVal('timePerTest', 0);
+    const hourlyRate    = getVal('hourlyRate', 0);
+    const cylEff        = parseFloat(document.getElementById('cylinderEff').value);
+    const retestRate    = parseFloat(document.getElementById('retestRate').value);
+    const csPerWeek     = getVal('confinedSpace', 0);
+    const devicesPerCS  = getVal('devicesPerCS', 0) || 1;
+
+    // Slider values
+    const altBumpInterval = parseInt(document.getElementById('altBumpSlider').value);
+    const altCalInterval  = parseInt(document.getElementById('altCalSlider').value);
+
+    // Same-interval warnings
+    const bumpSame = altBumpInterval === currentBump;
+    const calSame  = altCalInterval  === currentCal;
+    document.getElementById('bumpSameWarning').classList.toggle('visible', bumpSame);
+    document.getElementById('calSameWarning').classList.toggle('visible', calSame);
+
+    // Dynamic Scenario B interval label
+    const altBumpLabel = altBumpInterval === 1 ? 'Daily bump' : altBumpInterval + '-day bump';
+    const altCalLabel  = altCalInterval  + '-day cal';
+    const eligibleNote = (eligibleRaw !== '' && eligibleDevices < devices)
+      ? ' · ' + Math.round(eligibleDevices) + ' of ' + Math.round(devices) + ' devices'
+      : '';
+    document.getElementById('altIntervalLabel').textContent = altBumpLabel + ' / ' + altCalLabel + eligibleNote;
 
     updateNudge(devices, cylSize, cylCost, timePerTest, hourlyRate);
 
@@ -815,44 +1043,57 @@
     const labourPerTestMin = timePerTest * (1 + retestRate);
     const labourPerTestHr  = labourPerTestMin / 60;
     const labourPerTest    = labourPerTestHr * hourlyRate;
-
-    // FIX 2: CS entries are site-level × devices per entry, not × total fleet
     const csWeeks          = workingDays / 5;
     const csTotalTests     = csPerWeek * csWeeks * devicesPerCS;
 
     // ── SCENARIO A ──
-    const sBumpsPerDevice  = workingDays / currentBump;
-    const sCalsPerDevice   = workingDays / currentCal;
-    const sBumpFleet       = sBumpsPerDevice * devices;
-    const sCalFleet        = sCalsPerDevice  * devices;
+    const sBumpsPerDevice = workingDays / currentBump;
+    const sCalsPerDevice  = workingDays / currentCal;
+    const sBumpFleet      = sBumpsPerDevice * devices;
+    const sCalFleet       = sCalsPerDevice  * devices;
+    const sRoutineGas     = (sBumpFleet * gasPerBump) + (sCalFleet * gasPerCal);
+    const sGasCostVal     = sRoutineGas * costPerLitre;
+    const sLabourCostVal  = (sBumpFleet + sCalFleet) * labourPerTest;
+    const sCsGas          = csTotalTests * gasPerBump;
+    const sCsLabour       = csTotalTests * labourPerTest;
+    const sCsCostVal      = sCsGas * costPerLitre + sCsLabour;
+    const sTotalVal       = sGasCostVal + sLabourCostVal + sCsCostVal;
 
-    // FIX 1: gas totals for routine testing only — CS gas goes into sCsCostVal separately
-    const sRoutineGas      = (sBumpFleet * gasPerBump) + (sCalFleet * gasPerCal);
-    const sGasCostVal      = sRoutineGas * costPerLitre;
-    const sLabourCostVal   = (sBumpFleet + sCalFleet) * labourPerTest;
+    // ── ELIGIBLE DEVICES SPLIT ──
+    // If blank, full fleet is eligible. If entered, clamp to fleet size.
+    const eligibleRaw     = document.getElementById('eligibleDevices').value;
+    const eligibleDevices = eligibleRaw === '' ? devices : Math.min(parseFloat(eligibleRaw) || devices, devices);
+    const ineligible      = devices - eligibleDevices;
 
-    // FIX 1 + FIX 2: CS cost = labour + gas, crew-based, not fleet-wide
-    const sCsGas           = csTotalTests * gasPerBump;
-    const sCsLabour        = csTotalTests * labourPerTest;
-    const sCsCostVal       = sCsGas * costPerLitre + sCsLabour;
+    // Show/hide the split display
+    const splitEl = document.getElementById('eligibleSplit');
+    if (eligibleRaw !== '' && eligibleDevices < devices) {
+      splitEl.style.display = 'block';
+      document.getElementById('eligibleCount').textContent    = Math.round(eligibleDevices);
+      document.getElementById('ineligibleCount').textContent  = Math.round(ineligible);
+    } else {
+      splitEl.style.display = 'none';
+    }
 
-    const sTotalVal        = sGasCostVal + sLabourCostVal + sCsCostVal;
+    // ── SCENARIO B (slider-driven, eligible devices only) ──
+    // Eligible devices: move to alternative intervals
+    // Ineligible devices: stay on current Scenario A intervals (cost cancels in saving calc)
+    const aBumpsPerDevice     = workingDays / altBumpInterval;
+    const aCalsPerDevice      = workingDays / altCalInterval;
+    const aBumpFleetEligible  = aBumpsPerDevice * eligibleDevices;
+    const aCalFleetEligible   = aCalsPerDevice  * eligibleDevices;
+    // Ineligible portion stays on current regime in Scenario B
+    const aBumpFleetInelig    = sBumpsPerDevice * ineligible;
+    const aCalFleetInelig     = sCalsPerDevice  * ineligible;
+    const aBumpFleet          = aBumpFleetEligible + aBumpFleetInelig;
+    const aCalFleet           = aCalFleetEligible  + aCalFleetInelig;
+    const aRoutineGas     = (aBumpFleet * gasPerBump) + (aCalFleet * gasPerCal);
+    const aGasCostVal     = aRoutineGas * costPerLitre;
+    const aLabourCostVal  = (aBumpFleet + aCalFleet) * labourPerTest;
+    const aCsCostVal      = sCsCostVal;
+    const aTotalVal       = aGasCostVal + aLabourCostVal + aCsCostVal;
 
-    // ── SCENARIO B ──
-    const altBumpInterval  = 30;
-    const altCalInterval   = 180;
-    const aBumpsPerDevice  = workingDays / altBumpInterval;
-    const aCalsPerDevice   = workingDays / altCalInterval;
-    const aBumpFleet       = aBumpsPerDevice * devices;
-    const aCalFleet        = aCalsPerDevice  * devices;
-
-    const aRoutineGas      = (aBumpFleet * gasPerBump) + (aCalFleet * gasPerCal);
-    const aGasCostVal      = aRoutineGas * costPerLitre;
-    const aLabourCostVal   = (aBumpFleet + aCalFleet) * labourPerTest;
-    const aCsCostVal       = sCsCostVal; // identical in both scenarios
-    const aTotalVal        = aGasCostVal + aLabourCostVal + aCsCostVal;
-
-    // ── POPULATE SCENARIO A ──
+    // ── POPULATE A ──
     document.getElementById('sBumpTests').textContent   = fmtN(sBumpFleet);
     document.getElementById('sCalTests').textContent    = fmtN(sCalFleet);
     document.getElementById('sTotalGas').textContent    = fmtL(sRoutineGas + sCsGas);
@@ -861,7 +1102,7 @@
     document.getElementById('sCSCost').textContent      = csPerWeek > 0 ? fmt(sCsCostVal) : 'N/A';
     document.getElementById('sTotal').textContent       = fmt(sTotalVal);
 
-    // ── POPULATE SCENARIO B ──
+    // ── POPULATE B ──
     document.getElementById('aBumpTests').textContent   = fmtN(aBumpFleet);
     document.getElementById('aCalTests').textContent    = fmtN(aCalFleet);
     document.getElementById('aTotalGas').textContent    = fmtL(aRoutineGas + sCsGas);
@@ -870,7 +1111,7 @@
     document.getElementById('aCSCost').textContent      = csPerWeek > 0 ? fmt(aCsCostVal) : 'N/A';
     document.getElementById('aTotal').textContent       = fmt(aTotalVal);
 
-    // ── INTERVAL LABEL ──
+    // ── INTERVAL LABEL (Scenario A) ──
     const bumpLabels = {1:'Daily',2:'Every 2 days',3:'Every 3 days',7:'Weekly',14:'Every 2 weeks',30:'Monthly'};
     const calLabels  = {1:'daily cal',7:'weekly cal',14:'2-week cal',30:'30-day cal',60:'60-day cal',90:'90-day cal',180:'180-day cal'};
     const bLabel = bumpLabels[currentBump] || (currentBump + '-day bump');
@@ -889,11 +1130,16 @@
     banner.classList.add('visible');
 
     const negNote = document.getElementById('savingNegative');
-    if (saving < 0) {
-      document.getElementById('savingAmount').textContent = fmt(Math.abs(saving)) + ' additional cost';
-      document.getElementById('savingAmount').style.color = '#FFB3A0';
+    if (saving <= 0) {
+      const isIdentical = bumpSame && calSame;
+      document.getElementById('savingAmount').textContent = saving === 0 ? '$0' : fmt(Math.abs(saving)) + ' additional cost';
+      document.getElementById('savingAmount').style.color = saving === 0 ? 'white' : '#FFB3A0';
       negNote.style.display = 'block';
-      negNote.textContent = 'Your current regime is already at or near the risk-calibrated interval. The alternative scenario costs more in this configuration. Review your inputs or consult the methodology notes.';
+      negNote.textContent = isIdentical
+        ? 'Scenario B intervals match your current regime exactly — set the sliders to a less frequent interval to model a saving.'
+        : saving === 0
+          ? 'The two scenarios produce the same cost. Adjust the sliders to see a meaningful comparison.'
+          : 'Your current regime is already at or near the risk-calibrated interval. The alternative scenario costs more in this configuration. Review your inputs or consult the methodology notes.';
       bannerHeader.style.background = '#7A3820';
     } else {
       document.getElementById('savingAmount').textContent = fmt(saving);
@@ -903,8 +1149,11 @@
     }
 
     const pct = sTotalVal > 0 ? Math.round((saving / sTotalVal) * 100) : 0;
+    const deviceRef = (eligibleRaw !== '' && eligibleDevices < devices)
+      ? fmtN(eligibleDevices) + ' of ' + fmtN(devices) + ' devices'
+      : fmtN(devices) + ' device' + (devices !== 1 ? 's' : '');
     document.getElementById('savingSubtext').textContent =
-      'Estimated ' + pct + '% reduction in annual testing costs across ' + fmtN(devices) + ' device' + (devices !== 1 ? 's' : '');
+      'Estimated ' + Math.max(0, pct) + '% reduction in annual testing costs across ' + deviceRef;
     document.getElementById('savingGas').textContent    = fmt(savingGasVal);
     document.getElementById('savingLabour').textContent = fmt(savingLab);
     document.getElementById('savingTests').textContent  = fmtN(savingTests) + ' fewer tests/yr';
@@ -912,6 +1161,12 @@
 
     document.getElementById('results').classList.add('animate-in');
   }
+
+  // Initialise slider tracks on load
+  window.addEventListener('load', function() {
+    updateSliderTrack('altBumpSlider', 1, 30);
+    updateSliderTrack('altCalSlider', 30, 180);
+  });
 </script>
 </body>
 </html>
