@@ -109,8 +109,6 @@
   .adjust-body.open { display:block; }
   .sub-section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--mid); margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
   .sub-section-title + * { margin-top:0; }
-  .adjust-note { margin-top:16px; padding:10px 14px; background:var(--red-light); border-left:3px solid var(--red); border-radius:var(--radius); font-size:11px; color:#6B2030; line-height:1.55; }
-
   /* SLIDERS */
   .slider-field { display:flex; flex-direction:column; gap:10px; }
   .slider-header { display:flex; align-items:baseline; justify-content:space-between; }
@@ -159,8 +157,6 @@
   .saving-item-lbl { font-size:11px; color:var(--mid); font-weight:500; }
   .saving-item-val { font-family:var(--font-mono); font-size:16px; font-weight:500; color:var(--green); }
   .saving-neg { background:var(--amber-light); border-left:3px solid var(--amber); padding:12px 16px; border-radius:var(--radius); margin-top:16px; font-size:13px; color:var(--amber); }
-
-  .disclaimer { margin-top:24px; padding:16px 20px; background:var(--red-light); border-left:3px solid var(--red); border-radius:var(--radius); font-size:12px; color:#6B2030; line-height:1.6; }
 
   /* METHODOLOGY */
   .methodology { margin-top:40px; border:1.5px solid var(--border); border-radius:var(--radius-lg); }
@@ -217,7 +213,6 @@
   .mode-badge { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:20px; font-size:10px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; }
   .mode-badge.manual { background:#F0F0F0; color:var(--slate); }
   .mode-badge.docked { background:var(--green-light); color:var(--green); }
-  .mode-badge.mixed { background:var(--amber-light); color:var(--amber); }
   .saving-gas-callout { margin-top:12px; padding:10px 14px; background:var(--green-light); border-left:3px solid var(--green); border-radius:var(--radius); font-size:12px; color:var(--green); display:none; }
   .saving-gas-callout.show { display:block; }
   .saving-gas-callout strong { font-weight:600; }
@@ -563,8 +558,8 @@
           </div>
         </div>
 
-        <div class="adjust-note">
-          Maximum intervals reflect manufacturer-validated performance data for LEL MPS sensors in low-to-medium risk diffused applications. In standard four-gas monitors, the LEL sensor is the primary driver of bump test and calibration frequency; MPS technology removes the silent-failure risk that makes daily testing necessary for catalytic bead sensors. These intervals do not apply to confined space entry, IDLH environments, sites where sensor poisons are present, environments where hydrogen detection is required (NDIR sensors cannot detect hydrogen), or where regulations mandate more frequent testing. If in doubt, maintain conservative intervals.
+        <div class="field-default" style="margin-top:12px;font-style:normal;color:var(--mid);font-size:11px">
+          Maximum intervals reflect validated performance data for LEL MPS sensors in low-to-medium risk diffused applications. They do not apply to confined space, IDLH, or emergency response roles.
         </div>
 
         <!-- ADVANCED ASSUMPTIONS -->
@@ -617,9 +612,6 @@
       </div><!-- /adjust-body -->
     </div><!-- /adjust-panel -->
 
-    <div class="disclaimer">
-      <strong>Important:</strong> This calculator models routine interval testing only. It does not include post-alarm retesting or testing following over-limit or under-limit sensor events, which are required regardless of sensor type. Confined space pre-entry testing is modelled separately as an additive cost and does not affect the saving calculation. Results are estimates based on your inputs and should be used as a discussion starting point, not as a compliance document. Always apply the most stringent requirements applicable to your site.
-    </div>
   </div><!-- /results -->
 
   <!-- METHODOLOGY -->
@@ -638,7 +630,7 @@
       <h4>Prorated Annual Event Counts</h4>
       <p>Annual test counts are calculated as continuous prorated values rather than rounded integers. For example, a 30-day calibration interval applied over 365 calendar days yields 12.17 calibrations per device per year, and this figure is used directly in the cost calculation. The displayed test counts in the results are rounded to whole numbers for readability, which means the visible count may differ slightly from the underlying cost basis. This approach treats the annual figure as an expected-value estimate, which is appropriate for a cost modelling tool used over a full year across a fleet of devices. The methodology note makes this explicit because the displayed numbers look more concrete than they are.</p>
       <h4>Testing Method and Default Assumptions</h4>
-      <p>The calculator supports three testing configurations: Manual Testing, Docking Station, and Mixed Fleet. Selecting a configuration sets appropriate default values for gas consumed per bump test, the calibration gas multiplier, cylinder efficiency, and the technician time fallback used when no time is entered.</p>
+      <p>The calculator supports two testing configurations: Manual Testing and Docking Station. Selecting a configuration sets appropriate default values for gas consumed per bump test, the calibration gas multiplier, cylinder efficiency, and the technician time fallback used when no time is entered.</p>
       <p><strong>Manual Testing</strong> defaults reflect a technician using a regulator and hose to bump and calibrate devices individually. Gas per bump test defaults to 0.8L for a four-gas monitor. The calibration multiplier defaults to 4x. Cylinder efficiency defaults to 85%. Technician time is not pre-filled but the model uses 15 minutes as a fallback if the field is left blank.</p>
       <p><strong>Docking Station</strong> defaults reflect an automated station that controls gas flow precisely and runs test cycles unattended. Gas per bump test defaults to 0.6L reflecting tighter metered flow. The calibration multiplier defaults to 3x reflecting a more controlled, shorter calibration cycle. Cylinder efficiency defaults to 90% reflecting engineered connections with minimal purge loss. Technician time represents handling time only: loading and retrieving the device. The model uses 2 minutes as a fallback. The station's autonomous cycle time carries no labour cost and should not be included in the time per test field.</p>
       <p>User-entered values for any field override the mode defaults in both configurations.</p>
@@ -685,7 +677,7 @@
 
 <footer class="site-footer">
   <div class="footer-logo"><span>blackline</span><span>safety</span></div>
-  <div class="footer-note">For internal use and customer discussion. Not a compliance document. &copy; Blackline Safety 2026.</div>
+  <div class="footer-note">For internal use and customer discussion. This tool does not constitute compliance guidance; always apply the most stringent requirements applicable to your site. &copy; Blackline Safety 2026.</div>
 </footer>
 
 <script>
@@ -1035,7 +1027,7 @@
       grid.insertBefore(itemGas, grid.firstChild);
     }
 
-    // Gas callout: show in docked or mixed mode when gas saving is positive and dominant
+    // Gas callout: show in docked mode when gas saving is positive and dominant
     const callout = document.getElementById('savingGasCallout');
     const gasIsDominant = svGas > 0 && svGas >= svLab;
     const isDocked = mode === 'docked';
