@@ -45,7 +45,8 @@
   .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
 
   .reset-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; padding:12px 18px; background:var(--white); border:1.5px solid var(--border); border-radius:var(--radius-lg); }
-  .reset-bar-text { font-size:13px; color:var(--mid); }
+  .reset-bar-left { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .reset-bar-label { font-size:12px; font-weight:600; color:var(--slate); }
   .reset-btn { display:flex; align-items:center; gap:6px; background:none; border:1.5px solid var(--border); border-radius:var(--radius); padding:7px 14px; font-family:var(--font-body); font-size:13px; font-weight:500; color:var(--slate); cursor:pointer; transition:all 0.15s; }
   .reset-btn:hover { border-color:var(--red); color:var(--red); background:var(--red-light); }
   .reset-btn svg { width:13px; height:13px; fill:currentColor; }
@@ -74,7 +75,7 @@
 
   input[type="number"],select { width:100%; height:42px; border:1.5px solid var(--border); border-radius:var(--radius); font-family:var(--font-body); font-size:15px; color:var(--black); background:var(--white); padding:0 12px; transition:border-color 0.15s,box-shadow 0.15s; -webkit-appearance:none; appearance:none; }
   input[type="number"]:focus,select:focus { outline:none; border-color:var(--red); box-shadow:0 0 0 3px rgba(196,18,48,0.1); }
-  input.has-prefix { padding-left:28px; }
+  input.has-prefix { padding-left:28px; } /* overridden dynamically by setCurrency for multi-char symbols */
   input.has-suffix { padding-right:36px; }
   select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B6B6B' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; cursor:pointer; }
   input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button { -webkit-appearance:none; }
@@ -109,6 +110,7 @@
   .adjust-body.open { display:block; }
   .sub-section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--mid); margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
   .sub-section-title + * { margin-top:0; }
+  .scope-note { display:flex; align-items:flex-start; gap:8px; margin-top:14px; padding:10px 13px; background:#F0F5FF; border-left:3px solid #4A80C4; border-radius:var(--radius); font-size:11px; color:#2A4A7A; line-height:1.55; }
   /* SLIDERS */
   .slider-field { display:flex; flex-direction:column; gap:10px; }
   .slider-header { display:flex; align-items:baseline; justify-content:space-between; }
@@ -138,6 +140,7 @@
   .s-body { background:white; padding:20px; border-radius:0 0 var(--radius-lg) var(--radius-lg); }
   .cost-line { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #F0F0F0; font-size:13px; }
   .cost-line:last-of-type { border-bottom:none; }
+  .cost-line.cs-line.hidden { display:none; }
   .cost-lbl { color:var(--mid); }
   .cost-val { font-family:var(--font-mono); font-size:13px; font-weight:500; color:var(--slate); }
   .cost-total { margin-top:16px; padding:14px 16px; background:var(--bg); border-radius:var(--radius); }
@@ -156,6 +159,8 @@
   .saving-item { display:flex; flex-direction:column; gap:4px; }
   .saving-item-lbl { font-size:11px; color:var(--mid); font-weight:500; }
   .saving-item-val { font-family:var(--font-mono); font-size:16px; font-weight:500; color:var(--green); }
+  .saving-item-secondary .saving-item-lbl { color:#9A9A9A; }
+  .saving-item-val-sm { font-size:13px; color:#5A9A7A; }
   .saving-neg { background:var(--amber-light); border-left:3px solid var(--amber); padding:12px 16px; border-radius:var(--radius); margin-top:16px; font-size:13px; color:var(--amber); }
 
   /* METHODOLOGY */
@@ -217,6 +222,10 @@
   .saving-gas-callout.show { display:block; }
   .saving-gas-callout strong { font-weight:600; }
 
+  /* MODE FEEDBACK TOAST */
+  .mode-toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--charcoal); color:white; font-size:12px; padding:8px 16px; border-radius:20px; opacity:0; transition:opacity 0.2s, transform 0.2s; pointer-events:none; z-index:300; white-space:nowrap; }
+  .mode-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
   .site-footer { background:var(--black); padding:20px 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
   .footer-logo { display:flex; align-items:center; font-family:var(--font-body); font-weight:600; font-size:14px; }
   .footer-logo span:first-child { color:var(--white); }
@@ -232,6 +241,7 @@
 
 <!-- Single tooltip bubble: lives on body, fixed to viewport, never clipped -->
 <div class="tip-bubble" id="tipBubble"></div>
+<div class="mode-toast" id="modeToast"></div>
 
 <header class="site-header">
   <div class="logo"><span>blackline</span><span>safety</span></div>
@@ -251,7 +261,7 @@
 
   <div class="reset-bar">
     <div class="reset-bar-left">
-      <span class="reset-bar-text">Fill in the fields below to generate your cost comparison.</span>
+      <label class="reset-bar-label">Currency</label>
       <select class="currency-select" id="currencySelect" onchange="setCurrency(this.value)">
         <option value="USD" selected>USD ($)</option>
         <option value="CAD">CAD (CA$)</option>
@@ -368,13 +378,11 @@
           </select>
         </div>
       </div>
+      <div class="interval-callout" style="margin-top:16px;margin-bottom:0">
+        <svg class="interval-callout-icon" viewBox="0 0 16 16" width="14" height="14" fill="#2E7EC0"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 1.5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zM8 4a.75.75 0 100 1.5A.75.75 0 008 4zm-.75 2.5a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4z"/></svg>
+        <span><strong>Defaulted to daily bump testing and 30-day calibration,</strong> the most common legacy SOP in oil and gas, petrochemical, and utilities. If your current intervals are different, update both selects above before reading the results.</span>
+      </div>
     </div>
-  </div>
-
-  <!-- GAS COST -->
-  <div class="interval-callout">
-    <svg class="interval-callout-icon" viewBox="0 0 16 16" width="14" height="14" fill="#2E7EC0"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 1.5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zM8 4a.75.75 0 100 1.5A.75.75 0 008 4zm-.75 2.5a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4z"/></svg>
-    <span><strong>Defaulted to daily bump testing and 30-day calibration,</strong> the most common legacy SOP in oil and gas, petrochemical, and utilities. If your current intervals are different, update both selects above before reading the results.</span>
   </div>
   <div class="card" style="margin-bottom:16px">
     <div class="card-header">
@@ -464,7 +472,7 @@
           <div class="cost-line"><span class="cost-lbl">Total gas consumed</span><span class="cost-val" id="sTotalGas">-</span></div>
           <div class="cost-line"><span class="cost-lbl">Annual gas cost</span><span class="cost-val" id="sGasCost">-</span></div>
           <div class="cost-line"><span class="cost-lbl">Annual labour cost</span><span class="cost-val" id="sLabourCost">-</span></div>
-          <div class="cost-line"><span class="cost-lbl">Confined space testing</span><span class="cost-val" id="sCSCost">-</span></div>
+          <div class="cost-line cs-line"><span class="cost-lbl">Confined space testing</span><span class="cost-val" id="sCSCost">-</span></div>
           <div class="cost-total"><div class="cost-total-lbl">Estimated Annual Total</div><div class="cost-total-val" id="sTotal">-</div></div>
         </div>
       </div>
@@ -480,7 +488,7 @@
           <div class="cost-line"><span class="cost-lbl">Total gas consumed</span><span class="cost-val" id="aTotalGas">-</span></div>
           <div class="cost-line"><span class="cost-lbl">Annual gas cost</span><span class="cost-val" id="aGasCost">-</span></div>
           <div class="cost-line"><span class="cost-lbl">Annual labour cost</span><span class="cost-val" id="aLabourCost">-</span></div>
-          <div class="cost-line"><span class="cost-lbl">Confined space testing</span><span class="cost-val" id="aCSCost">-</span></div>
+          <div class="cost-line cs-line"><span class="cost-lbl">Confined space testing</span><span class="cost-val" id="aCSCost">-</span></div>
           <div class="cost-total"><div class="cost-total-lbl">Estimated Annual Total</div><div class="cost-total-val" id="aTotal">-</div></div>
         </div>
       </div>
@@ -496,8 +504,8 @@
         <div class="saving-grid" id="savingGrid">
           <div class="saving-item" id="item-gas"><div class="saving-item-lbl">Gas cost saving</div><div class="saving-item-val" id="savingGas">-</div></div>
           <div class="saving-item" id="item-labour"><div class="saving-item-lbl">Labour cost saving</div><div class="saving-item-val" id="savingLabour">-</div></div>
-          <div class="saving-item"><div class="saving-item-lbl">Fewer test events / yr</div><div class="saving-item-val" id="savingTests">-</div></div>
-          <div class="saving-item"><div class="saving-item-lbl">Technician hours saved / yr</div><div class="saving-item-val" id="savingHours">-</div></div>
+          <div class="saving-item saving-item-secondary"><div class="saving-item-lbl">Fewer test events / yr</div><div class="saving-item-val saving-item-val-sm" id="savingTests">-</div></div>
+          <div class="saving-item saving-item-secondary"><div class="saving-item-lbl">Technician hours saved / yr</div><div class="saving-item-val saving-item-val-sm" id="savingHours">-</div></div>
         </div>
         <div class="saving-gas-callout" id="savingGasCallout"></div>
         <div class="saving-neg" id="savingNeg" style="display:none"></div>
@@ -511,7 +519,7 @@
           <div class="adjust-icon"><svg viewBox="0 0 16 16"><path d="M1 3h14v1.5H1V3zm2 4h10v1.5H3V7zm2 4h6v1.5H5V11z"/></svg></div>
           <div>
             <div class="adjust-title">Adjust Your Comparison</div>
-            <div class="adjust-sub">Refine Scenario B intervals, eligible devices, and advanced assumptions</div>
+            <div class="adjust-sub">Set Scenario B intervals, fleet eligibility, and testing assumptions</div>
           </div>
         </div>
         <div class="adjust-toggle">Customise <span class="adjust-arrow">&#9660;</span></div>
@@ -558,8 +566,9 @@
           </div>
         </div>
 
-        <div class="field-default" style="margin-top:12px;font-style:normal;color:var(--mid);font-size:11px">
-          Maximum intervals reflect validated performance data for LEL MPS sensors in low-to-medium risk diffused applications. They do not apply to confined space, IDLH, or emergency response roles.
+        <div class="scope-note">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0;margin-top:1px"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 1.5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zM8 4a.75.75 0 100 1.5A.75.75 0 008 4zm-.75 2.5a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4z"/></svg>
+          <span>Maximum intervals reflect validated performance data for LEL MPS sensors in low-to-medium risk diffused applications. They do not apply to confined space, IDLH, or emergency response roles.</span>
         </div>
 
         <!-- ADVANCED ASSUMPTIONS -->
@@ -625,7 +634,8 @@
     </div>
     <div class="meth-body" id="methBody">
       <h4>What This Calculator Models</h4>
-      <p>This calculator models the <strong>annual cost of routine interval-based bump testing and calibration</strong> for a portable gas detection fleet. It compares your current testing regime against a risk-calibrated alternative based on the maintenance intervals validated for LEL MPS sensor technology: up to 30-day bump test intervals and up to 180-day calibration intervals under appropriate conditions.</p>
+      <p>This calculator helps safety and operations teams quantify the cost of their current gas detection testing regime and compare it against a risk-calibrated alternative based on modern sensor technology.</p>
+      <p>It models the <strong>annual cost of routine interval-based bump testing and calibration</strong> for a portable gas detection fleet, comparing your current regime against validated intervals for LEL MPS sensor technology: up to 30-day bump test intervals and up to 180-day calibration intervals under appropriate conditions.</p>
       <p>Costs are calculated across two dimensions: <strong>calibration gas consumption</strong> (cylinder volume, cost, and efficiency-adjusted usable volume per test) and <strong>technician labour</strong> (time per test event multiplied by fully-loaded hourly rate). Both dimensions are applied across the full fleet for the selected annual working period.</p>
       <h4>Prorated Annual Event Counts</h4>
       <p>Annual test counts are calculated as continuous prorated values rather than rounded integers. For example, a 30-day calibration interval applied over 365 calendar days yields 12.17 calibrations per device per year, and this figure is used directly in the cost calculation. The displayed test counts in the results are rounded to whole numbers for readability, which means the visible count may differ slightly from the underlying cost basis. This approach treats the annual figure as an expected-value estimate, which is appropriate for a cost modelling tool used over a full year across a fleet of devices. The methodology note makes this explicit because the displayed numbers look more concrete than they are.</p>
@@ -699,6 +709,13 @@
     // Update input prefix symbols
     document.getElementById('cylCostPrefix').textContent    = currSym;
     document.getElementById('hourlyRatePrefix').textContent = currSym;
+    // Adjust left padding dynamically to prevent symbol overlapping placeholder text
+    // Single char ($, £, €): 28px | Two chars (CA$, A$): 40px | fallback: 48px
+    const symLen = currSym.length;
+    const pad = symLen <= 1 ? '28px' : symLen === 2 ? '38px' : '46px';
+    ['cylinderCost','hourlyRate'].forEach(id => {
+      document.getElementById(id).style.paddingLeft = pad;
+    });
     calculate();
   }
 
@@ -754,8 +771,18 @@
   };
 
   let currentMode = 'manual';
+  let toastTimer;
+
+  function showToast(msg) {
+    const t = document.getElementById('modeToast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
 
   function setMode(mode) {
+    const isSwitch = mode !== currentMode;
     currentMode = mode;
     ['manual','docked'].forEach(m => {
       document.getElementById('tab-'+m).classList.toggle('active', m === mode);
@@ -782,6 +809,11 @@
     document.getElementById('tptHint').textContent = d.tptHint;
     const tptIcon = document.getElementById('tptTipIcon');
     if (tptIcon) tptIcon.dataset.tip = d.tptTip;
+
+    if (isSwitch) {
+      const label = mode === 'docked' ? 'Docking Station' : 'Manual Testing';
+      showToast(label + ' defaults applied');
+    }
 
     calculate();
   }
@@ -971,6 +1003,11 @@
     set('aLabourCost', fmt(aLC));       set('aCSCost',     csWk>0 ? fmt(csC) : 'N/A');
     set('aTotal',      fmt(aT));
 
+    // Show/hide confined space rows: only visible when user has entered CS entries
+    document.querySelectorAll('.cs-line').forEach(el => {
+      el.classList.toggle('hidden', csWk === 0);
+    });
+
     // Interval labels
     const BL = {1:'Daily',2:'Every 2 days',3:'Every 3 days',7:'Weekly',14:'Every 2 weeks',30:'Monthly'};
     const CL = {1:'daily cal',7:'weekly cal',14:'2-wk cal',30:'30-day cal',60:'60-day cal',90:'90-day cal',180:'180-day cal'};
@@ -1047,7 +1084,7 @@
   window.addEventListener('load', () => {
     track('altBumpSlider', 1, 30);
     track('altCalSlider', 30, 180);
-    // Apply manual defaults on load without overwriting empty fields
+    setCurrency('USD');
     setMode('manual');
   });
 </script>
