@@ -182,7 +182,28 @@
   .tag.inc { background:var(--green-light); border-color:#B0DFCA; color:var(--green); }
   .tag.exc { background:var(--amber-light); border-color:#F7C98C; color:var(--amber); }
 
-  /* TESTING METHOD SELECTOR */
+  /* CURRENCY SELECTOR */
+  .currency-select {
+    height:36px; padding:0 28px 0 10px; font-family:var(--font-body); font-size:13px;
+    font-weight:500; color:var(--slate); background:var(--white);
+    border:1.5px solid var(--border); border-radius:var(--radius); cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%236B6B6B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 8px center;
+    -webkit-appearance:none; appearance:none; transition:border-color 0.15s;
+  }
+  .currency-select:focus { outline:none; border-color:var(--red); }
+  .reset-bar-left { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+  /* INTERVAL CALLOUT */
+  .interval-callout {
+    margin-bottom:16px; padding:12px 16px 12px 14px;
+    background:var(--white); border:1.5px solid #D4E4F7;
+    border-left:3px solid #2E7EC0; border-radius:var(--radius-lg);
+    font-size:12px; color:#1A4A70; line-height:1.6;
+    display:flex; align-items:flex-start; gap:10px;
+  }
+  .interval-callout-icon { flex-shrink:0; margin-top:1px; }
+  .interval-callout strong { font-weight:600; }
   .method-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg); box-shadow:var(--shadow); margin-bottom:16px; padding:20px 24px; }
   .method-card-title { font-size:14px; font-weight:600; color:var(--black); margin-bottom:4px; }
   .method-card-sub { font-size:12px; color:var(--mid); margin-bottom:16px; }
@@ -193,8 +214,6 @@
   .tab-icon { display:flex; align-items:center; justify-content:center; height:32px; margin-bottom:4px; }
   .tab-label { display:block; font-size:12px; font-weight:600; }
   .tab-sub { display:block; font-size:10px; opacity:0.8; margin-top:2px; }
-  .mixed-reveal { margin-top:16px; padding-top:16px; border-top:1px solid var(--border); display:none; }
-  .mixed-reveal.show { display:block; }
   .mode-badge { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:20px; font-size:10px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; }
   .mode-badge.manual { background:#F0F0F0; color:var(--slate); }
   .mode-badge.docked { background:var(--green-light); color:var(--green); }
@@ -236,7 +255,16 @@
 <div class="main">
 
   <div class="reset-bar">
-    <span class="reset-bar-text">Fill in the fields below to generate your cost comparison.</span>
+    <div class="reset-bar-left">
+      <span class="reset-bar-text">Fill in the fields below to generate your cost comparison.</span>
+      <select class="currency-select" id="currencySelect" onchange="setCurrency(this.value)">
+        <option value="USD" selected>USD ($)</option>
+        <option value="CAD">CAD (CA$)</option>
+        <option value="AUD">AUD (A$)</option>
+        <option value="GBP">GBP (£)</option>
+        <option value="EUR">EUR (€)</option>
+      </select>
+    </div>
     <button class="reset-btn" onclick="resetAll()">
       <svg viewBox="0 0 16 16"><path d="M2 8a6 6 0 1 1 1.17 3.585l1.065-1.065A4.5 4.5 0 1 0 3.5 8H5.5L3 10.5.5 8H2z"/></svg>
       Reset all fields
@@ -280,28 +308,6 @@
         <span class="tab-label">Docking Station</span>
         <span class="tab-sub">Automated, metered flow</span>
       </button>
-      <button class="method-tab" id="tab-mixed" onclick="setMode('mixed')">
-        <span class="tab-icon">
-          <!-- Split device: half cylinder, half dock base -->
-          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:28px;height:28px">
-            <line x1="16" y1="4" x2="16" y2="28" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 2"/>
-            <rect x="3" y="9" width="8" height="13" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
-            <rect x="4" y="6" width="6" height="4" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
-            <rect x="17" y="22" width="12" height="5" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
-            <rect x="20" y="12" width="6" height="11" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
-            <circle cx="23" cy="24.5" r="1.2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-          </svg>
-        </span>
-        <span class="tab-label">Mixed Fleet</span>
-        <span class="tab-sub">Some docked, some manual</span>
-      </button>
-    </div>
-    <div class="mixed-reveal" id="mixedReveal">
-      <div class="field" style="max-width:320px">
-        <label class="field-label">Devices on Docking Stations <span class="tip-icon" data-tip="Enter how many devices in your fleet are tested via docking station. The remainder will use manual testing defaults. Both segments are calculated separately and combined in the output.">?</span></label>
-        <input type="number" id="dockedDevices" min="0" placeholder="e.g. 60" oninput="calculate()">
-        <div class="field-default">The remaining devices will use manual testing defaults</div>
-      </div>
     </div>
   </div>
 
@@ -371,6 +377,10 @@
   </div>
 
   <!-- GAS COST -->
+  <div class="interval-callout">
+    <svg class="interval-callout-icon" viewBox="0 0 16 16" width="14" height="14" fill="#2E7EC0"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 1.5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zM8 4a.75.75 0 100 1.5A.75.75 0 008 4zm-.75 2.5a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4z"/></svg>
+    <span><strong>Defaulted to daily bump testing and 30-day calibration,</strong> the most common legacy SOP in oil and gas, petrochemical, and utilities. If your current intervals are different, update both selects above before reading the results.</span>
+  </div>
   <div class="card" style="margin-bottom:16px">
     <div class="card-header">
       <div class="card-header-icon"><svg viewBox="0 0 16 16"><path d="M8 1a1 1 0 011 1v1.5h1.5a1 1 0 010 2H9V7a1 1 0 01-2 0V5.5H5.5a1 1 0 010-2H7V2a1 1 0 011-1zM2 10a1 1 0 011-1h10a1 1 0 010 2H3a1 1 0 01-1-1zm1 3a1 1 0 000 2h10a1 1 0 000-2H3z"/></svg></div>
@@ -388,7 +398,7 @@
         <div class="field">
           <label class="field-label">Cylinder Cost <span class="tip-icon" data-tip="Total cost of one cylinder including delivery. Multi-gas blend cylinders (LEL, O2, H2S, CO) typically cost significantly more than single-gas cylinders of the same volume. Check your supplier invoice, not just the list price.">?</span></label>
           <div class="input-wrap">
-            <span class="input-prefix">$</span>
+            <span class="input-prefix" id="cylCostPrefix">$</span>
             <input type="number" id="cylinderCost" min="0" placeholder="e.g. 85" class="has-prefix" oninput="calculate()">
           </div>
         </div>
@@ -423,7 +433,7 @@
         <div class="field">
           <label class="field-label">Fully-Loaded Hourly Rate <span class="tip-icon" data-tip="The true cost of technician time including base salary, benefits, overhead, and any contractor margin. Fully-loaded rates are typically 1.3–1.6x base salary.">?</span></label>
           <div class="input-wrap">
-            <span class="input-prefix">$</span>
+            <span class="input-prefix" id="hourlyRatePrefix">$</span>
             <input type="number" id="hourlyRate" min="0" placeholder="e.g. 65" class="has-prefix" oninput="calculate()">
             <span class="input-suffix">/hr</span>
           </div>
@@ -631,7 +641,7 @@
       <p>The calculator supports three testing configurations: Manual Testing, Docking Station, and Mixed Fleet. Selecting a configuration sets appropriate default values for gas consumed per bump test, the calibration gas multiplier, cylinder efficiency, and the technician time fallback used when no time is entered.</p>
       <p><strong>Manual Testing</strong> defaults reflect a technician using a regulator and hose to bump and calibrate devices individually. Gas per bump test defaults to 0.8L for a four-gas monitor. The calibration multiplier defaults to 4x. Cylinder efficiency defaults to 85%. Technician time is not pre-filled but the model uses 15 minutes as a fallback if the field is left blank.</p>
       <p><strong>Docking Station</strong> defaults reflect an automated station that controls gas flow precisely and runs test cycles unattended. Gas per bump test defaults to 0.6L reflecting tighter metered flow. The calibration multiplier defaults to 3x reflecting a more controlled, shorter calibration cycle. Cylinder efficiency defaults to 90% reflecting engineered connections with minimal purge loss. Technician time represents handling time only: loading and retrieving the device. The model uses 2 minutes as a fallback. The station's autonomous cycle time carries no labour cost and should not be included in the time per test field.</p>
-      <p><strong>Mixed Fleet</strong> uses the docking station defaults for the docked device count and manual defaults for the remainder. Where no device count is entered, all devices use manual defaults. User-entered values for any field override the mode defaults in all configurations.</p>
+      <p>User-entered values for any field override the mode defaults in both configurations.</p>
       <h4>Working Days versus Calendar Days</h4>
       <p>Bump test frequency and calibration frequency are treated on different time bases, because they operate differently in practice. Bump tests are typically performed at shift start, so they follow working days: a daily bump test means one test per working day, and the annual count is driven by how many days per year the site operates. The working days input controls this directly.</p>
       <p>Calibration intervals, by contrast, are always defined in calendar days in every regulatory framework and industry SOP this calculator is designed to support. A 30-day calibration interval means every 30 calendar days regardless of how many of those are working days. The calculator therefore computes annual calibrations as 365 divided by the calibration interval, independent of the working days input. The working days input affects bump test frequency and labour cost only.</p>
@@ -679,6 +689,27 @@
 </footer>
 
 <script>
+  // ── CURRENCY SYSTEM ──
+  const CURRENCIES = {
+    USD: { sym:'$',   label:'USD', locale:'en-US' },
+    CAD: { sym:'CA$', label:'CAD', locale:'en-CA' },
+    AUD: { sym:'A$',  label:'AUD', locale:'en-AU' },
+    GBP: { sym:'\u00a3',  label:'GBP', locale:'en-GB' },
+    EUR: { sym:'\u20ac',  label:'EUR', locale:'de-DE' },
+  };
+  let currSym    = '$';
+  let currLocale = 'en-US';
+
+  function setCurrency(code) {
+    const c = CURRENCIES[code] || CURRENCIES.USD;
+    currSym    = c.sym;
+    currLocale = c.locale;
+    // Update input prefix symbols
+    document.getElementById('cylCostPrefix').textContent    = currSym;
+    document.getElementById('hourlyRatePrefix').textContent = currSym;
+    calculate();
+  }
+
   // ── TOOLTIP ENGINE ──
   const tipBubble = document.getElementById('tipBubble');
   let tipTimer;
@@ -734,18 +765,14 @@
 
   function setMode(mode) {
     currentMode = mode;
-    ['manual','docked','mixed'].forEach(m => {
+    ['manual','docked'].forEach(m => {
       document.getElementById('tab-'+m).classList.toggle('active', m === mode);
     });
-    document.getElementById('mixedReveal').classList.toggle('show', mode === 'mixed');
 
-    const d = MODES[mode === 'mixed' ? 'manual' : mode];
+    const d = MODES[mode];
 
-    // Always set cylEff for manual and docked: it lives in a hidden panel
-    // For mixed mode, do not set it: the calculation uses a weighted average
-    if (mode !== 'mixed') {
-      document.getElementById('cylinderEff').value = String(d.cylEff);
-    }
+    // Always set cylEff: it lives in a hidden panel and the user cannot set it directly
+    document.getElementById('cylinderEff').value = String(d.cylEff);
 
     // Set gpb and calMult only if the user has not already entered a value
     const gpbEl = document.getElementById('gasPerBump');
@@ -761,7 +788,6 @@
     document.getElementById('gpbHint').textContent = 'Default: ' + d.gpbHint;
     document.getElementById('calHint').textContent = 'Default: ' + d.calHint;
     document.getElementById('tptHint').textContent = d.tptHint;
-    // Update the tpt tooltip dynamically
     const tptIcon = document.getElementById('tptTipIcon');
     if (tptIcon) tptIcon.dataset.tip = d.tptTip;
 
@@ -805,10 +831,10 @@
     s.style.background = `linear-gradient(to right,var(--red) ${p}%,var(--border) ${p}%)`;
   }
 
-  // ── HELPERS ──
-  const fmt  = n => (n == null || isNaN(n)) ? '-' : '$' + Math.round(n).toLocaleString('en-US');
-  const fmtN = n => (n == null || isNaN(n)) ? '-' : Math.round(n).toLocaleString('en-US');
-  const fmtL = n => (!n || isNaN(n))        ? '-' : Math.round(n).toLocaleString('en-US') + ' L';
+  // ── FORMATTERS ──
+  const fmt  = n => (n == null || isNaN(n)) ? '-' : currSym + Math.round(n).toLocaleString(currLocale);
+  const fmtN = n => (n == null || isNaN(n)) ? '-' : Math.round(n).toLocaleString(currLocale);
+  const fmtL = n => (!n || isNaN(n))        ? '-' : Math.round(n).toLocaleString(currLocale) + ' L';
   const gv   = (id, fb=0) => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? fb : v; };
   const set  = (id, v)    => { document.getElementById(id).textContent = v; };
 
@@ -830,8 +856,10 @@
   function resetAll() {
     // Clear all user-entered fields including mode-defaulted ones
     ['devices','customDays','cylinderSize','cylinderCost','gasPerBump','calMult','timePerTest',
-     'hourlyRate','confinedSpace','devicesPerCS','eligibleDevices','dockedDevices']
+     'hourlyRate','confinedSpace','devicesPerCS','eligibleDevices']
       .forEach(id => document.getElementById(id).value = '');
+    document.getElementById('currencySelect').value = 'USD';
+    setCurrency('USD');
     document.getElementById('workingDays').value = '220';
     document.getElementById('currentBump').value = '1';
     document.getElementById('currentCal').value  = '30';
@@ -845,7 +873,6 @@
     track('altCalSlider', 30, 180);
     ['bumpSameWarn','calSameWarn'].forEach(id => document.getElementById(id).classList.remove('show'));
     document.getElementById('eligibleSplit').style.display = 'none';
-    document.getElementById('mixedReveal').classList.remove('show');
     document.getElementById('results').style.display = 'none';
     document.getElementById('progressNudge').classList.remove('visible');
     document.getElementById('savingBanner').classList.remove('show');
@@ -871,38 +898,16 @@
     const altCal     = parseInt(document.getElementById('altCalSlider').value);
 
     // ── MODE-AWARE INPUTS ──
-    // In mixed mode, split fleet into docked and manual segments with different defaults
-    const mode       = currentMode;
-    const dM         = MODES.manual;
-    const dD         = MODES.docked;
-
+    const mode    = currentMode;
+    const d       = MODES[mode];
     let gpb, calMult, cylEff, tpt;
-    let dockedDevices = 0, manualDevices = devices;
 
-    if (mode === 'mixed') {
-      dockedDevices  = Math.min(gv('dockedDevices'), devices);
-      manualDevices  = devices - dockedDevices;
-      const wDoc     = devices > 0 ? dockedDevices / devices : 0;
-      const wMan     = 1 - wDoc;
-      gpb     = gv('gasPerBump')  || (dD.gpb         * wDoc + dM.gpb         * wMan);
-      calMult = gv('calMult')     || (dD.calMult      * wDoc + dM.calMult     * wMan);
-      tpt     = gv('timePerTest') || (dD.tptFallback  * wDoc + dM.tptFallback * wMan);
-      // cylEff: weighted average is the base for mixed mode.
-      // Only use the select value if the user has explicitly changed it from both mode defaults
-      // (i.e. it is not equal to either the docked or manual default).
-      const cylEffWeighted = dD.cylEff * wDoc + dM.cylEff * wMan;
-      const rawEff = parseFloat(document.getElementById('cylinderEff').value);
-      const userOverrode = !isNaN(rawEff) && rawEff !== dD.cylEff && rawEff !== dM.cylEff;
-      cylEff = userOverrode ? rawEff : cylEffWeighted;
-    } else {
-      const d  = MODES[mode];
-      gpb      = gv('gasPerBump')  || d.gpb;
-      calMult  = gv('calMult')     || d.calMult;
-      tpt      = gv('timePerTest') || d.tptFallback;
-      // cylEff: read from select with hard fallback to mode default
-      const rawEff = parseFloat(document.getElementById('cylinderEff').value);
-      cylEff = isNaN(rawEff) ? d.cylEff : rawEff;
-    }
+    gpb     = gv('gasPerBump')  || d.gpb;
+    calMult = gv('calMult')     || d.calMult;
+    tpt     = gv('timePerTest') || d.tptFallback;
+    // cylEff: read from select with hard fallback to mode default
+    const rawEff = parseFloat(document.getElementById('cylinderEff').value);
+    cylEff = isNaN(rawEff) ? d.cylEff : rawEff;
 
     // Eligible devices
     const eligRaw   = document.getElementById('eligibleDevices').value;
@@ -993,7 +998,7 @@
 
     const neg = document.getElementById('savingNeg');
     if (saving <= 0) {
-      set('savingAmt', saving===0 ? '$0' : fmt(Math.abs(saving))+' additional cost');
+      set('savingAmt', saving===0 ? currSym+'0' : fmt(Math.abs(saving))+' additional cost');
       document.getElementById('savingAmt').style.color = saving===0 ? 'white' : '#FFB3A0';
       neg.style.display = 'block';
       neg.textContent = (altBump===curBump && altCal===curCal)
@@ -1033,7 +1038,7 @@
     // Gas callout: show in docked or mixed mode when gas saving is positive and dominant
     const callout = document.getElementById('savingGasCallout');
     const gasIsDominant = svGas > 0 && svGas >= svLab;
-    const isDocked = mode === 'docked' || (mode === 'mixed' && dockedDevices > 0);
+    const isDocked = mode === 'docked';
     if (gasIsDominant && isDocked && saving > 0) {
       const calSvPct = sCF > 0 ? Math.round(((sCF - aCF) / sCF) * 100) : 0;
       callout.innerHTML = '<strong>Calibration gas is the primary saving driver.</strong> Moving from ' +
