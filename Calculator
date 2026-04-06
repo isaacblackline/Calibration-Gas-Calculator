@@ -409,10 +409,10 @@
         <div class="field">
           <label class="field-label">Gas Per Bump Test <span class="tip-icon" data-tip="Volume consumed per bump test. For manual four-gas testing, approximately 0.3L per bump test. For docking stations with precision metered flow, approximately 0.15L per bump test. Calibration gas volume is calculated separately using the calibration gas multiplier in Advanced Assumptions.">?</span></label>
           <div class="input-wrap">
-            <input type="number" id="gasPerBump" min="0.05" step="0.05" placeholder="0.3" class="has-suffix" oninput="calculate()">
+            <input type="number" id="gasPerBump" min="0.05" step="0.05" placeholder="e.g. 0.3" class="has-suffix" oninput="calculate()">
             <span class="input-suffix">L</span>
           </div>
-          <div class="field-default" id="gpbHint">Default: 0.3L per bump test (four-gas monitor, manual)</div>
+          <div class="field-default" id="gpbHint">Typical: 0.3L per bump test (four-gas monitor, manual)</div>
         </div>
       </div>
     </div>
@@ -593,7 +593,7 @@
               <input type="number" id="calMult" min="1" max="10" step="0.5" placeholder="4" class="has-suffix" oninput="calculate()">
               <span class="input-suffix">x</span>
             </div>
-            <div class="field-default" id="calHint">Default: 4x (four-gas monitor, manual)</div>
+            <div class="field-default" id="calHint">Typical: 4x (four-gas monitor, manual)</div>
           </div>
           <div class="field">
             <label class="field-label">Retest Rate <span class="tip-icon" data-tip="Percentage of tests requiring a retest due to a device failing or an inconclusive result. Each retest consumes additional gas and technician time. Applied equally to bump tests and calibrations. Default is 0% for well-maintained fleets.">?</span></label>
@@ -614,7 +614,7 @@
               <input type="number" id="labMult" min="1" max="10" step="0.5" placeholder="2.5" class="has-suffix" oninput="calculate()">
               <span class="input-suffix">x</span>
             </div>
-            <div class="field-default" id="labMultHint">Default: 2.5x (manual: bump under 3 min, calibration under 7 min)</div>
+            <div class="field-default" id="labMultHint">Typical: 2.5x (manual: bump under 3 min, calibration under 7 min)</div>
           </div>
         </div>
 
@@ -771,6 +771,8 @@
     manual: {
       gpb:0.3, calMult:4.0, cylEff:0.85,
       tptFallback: 3, labMultFallback: 2.5,
+      gpbPlaceholder: 'e.g. 0.3', calMultPlaceholder: 'e.g. 4',
+      tptPlaceholder: 'e.g. 3',   labMultPlaceholder: 'e.g. 2.5',
       gpbHint: '0.3L per bump test (four-gas monitor, manual)',
       calHint: '4x (four-gas monitor, manual: 0.3L bump, ~1.2L cal)',
       tptHint: 'Manual: under 3 min per bump test for four-gas',
@@ -780,6 +782,8 @@
     docked: {
       gpb:0.15, calMult:6.0, cylEff:0.90,
       tptFallback: 1, labMultFallback: 3.0,
+      gpbPlaceholder: 'e.g. 0.15', calMultPlaceholder: 'e.g. 6',
+      tptPlaceholder: 'e.g. 1',    labMultPlaceholder: 'e.g. 3',
       gpbHint: '0.15L per bump test (docking station, metered short-duration flow)',
       calHint: '6x (docked: 0.15L bump vs ~1L cal makes ratio higher than manual)',
       tptHint: 'Docked: ~1 min per bump test (sequential). Reduce for multi-bay stations.',
@@ -808,26 +812,30 @@
 
     const d = MODES[mode];
 
-    // Always set cylEff: it lives in a hidden panel and the user cannot set it directly
+    // cylEff: always set directly: lives in hidden panel, user cannot see it
     document.getElementById('cylinderEff').value = String(d.cylEff);
 
-    // Set gpb, calMult, labMult only if the user has not already entered a value
-    const gpbEl    = document.getElementById('gasPerBump');
-    const cmEl     = document.getElementById('calMult');
-    const labMEl   = document.getElementById('labMult');
-    if (!gpbEl.value)  gpbEl.value  = d.gpb;
-    if (!cmEl.value)   cmEl.value   = d.calMult;
-    if (!labMEl.value) labMEl.value = d.labMultFallback;
+    // gpb, calMult, tpt, labMult: never pre-fill.
+    // Clear on mode switch so placeholders and hints reflect the new mode.
+    // The calculation uses fallback values silently when fields are empty.
+    if (isSwitch) {
+      document.getElementById('gasPerBump').value  = '';
+      document.getElementById('calMult').value     = '';
+      document.getElementById('timePerTest').value = '';
+      document.getElementById('labMult').value     = '';
+    }
 
-    // tpt and labMult: clear on mode switch so hints reflect new mode
-    document.getElementById('timePerTest').value = '';
-    document.getElementById('labMult').value     = '';
+    // Update placeholders dynamically to reflect active mode suggestion
+    document.getElementById('gasPerBump').placeholder  = d.gpbPlaceholder;
+    document.getElementById('calMult').placeholder     = d.calMultPlaceholder;
+    document.getElementById('timePerTest').placeholder = d.tptPlaceholder;
+    document.getElementById('labMult').placeholder     = d.labMultPlaceholder;
 
-    // Always update hint text and dynamic tooltip to reflect active mode
-    document.getElementById('gpbHint').textContent    = 'Default: ' + d.gpbHint;
-    document.getElementById('calHint').textContent    = 'Default: ' + d.calHint;
-    document.getElementById('tptHint').textContent    = d.tptHint;
-    document.getElementById('labMultHint').textContent = 'Default: ' + d.labMultHint;
+    // Update hint text and dynamic tooltip
+    document.getElementById('gpbHint').textContent     = 'Typical: ' + d.gpbHint;
+    document.getElementById('calHint').textContent     = 'Typical: ' + d.calHint;
+    document.getElementById('tptHint').textContent     = d.tptHint;
+    document.getElementById('labMultHint').textContent = 'Typical: ' + d.labMultHint;
     const tptIcon = document.getElementById('tptTipIcon');
     if (tptIcon) tptIcon.dataset.tip = d.tptTip;
 
@@ -1106,7 +1114,7 @@
     // Labour caveat: show in docked mode to flag multi-bay station limitation
     const labCaveat = document.getElementById('savingLabourCaveat');
     if (isDocked && svLab > 0 && saving > 0) {
-      labCaveat.textContent = 'Labour saving assumes sequential device handling. For multi-bay stations where devices are loaded simultaneously, actual per-device time is lower and this figure may overstate the labour saving. Adjust the Time Per Test Event field to reflect your station capacity.';
+      labCaveat.textContent = 'Note: this figure assumes sequential device handling. In docking station environments with multi-bay stations, devices loaded simultaneously reduce the effective per-device time significantly. The gas saving above is not affected.';
       labCaveat.style.display = 'block';
     } else {
       labCaveat.style.display = 'none';
