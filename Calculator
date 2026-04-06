@@ -422,17 +422,17 @@
   <div class="card" style="margin-bottom:24px">
     <div class="card-header">
       <div class="card-header-icon"><svg viewBox="0 0 16 16"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg></div>
-      <div><div class="card-title">Labour Cost</div><div class="card-subtitle">Technician time per test and fully-loaded hourly rate</div></div>
+      <div><div class="card-title">Labour Cost</div><div class="card-subtitle">Technician time per bump test and fully-loaded hourly rate</div></div>
     </div>
     <div class="card-body">
       <div class="input-grid two-col">
         <div class="field">
-          <label class="field-label">Time Per Test Event <span class="tip-icon" id="tptTipIcon" data-tip="Total minutes per test event including setup, the test itself, device logging, and any downtime. Four-gas monitors tested manually typically require 12 to 20 minutes per device: the technician must connect the regulator, wait for all four sensors to respond, verify readings, and log results. Single-gas devices typically take 5 to 10 minutes.">?</span></label>
+          <label class="field-label">Time Per Bump Test <span class="tip-icon" id="tptTipIcon" data-tip="Minutes per bump test including setup, sensor exposure, and logging. Calibration time is handled separately via the Labour Time Multiplier in Advanced Assumptions, so enter only your bump test time here.">?</span></label>
           <div class="input-wrap">
-            <input type="number" id="timePerTest" min="1" step="1" placeholder="e.g. 15" class="has-suffix" oninput="calculate()">
+            <input type="number" id="timePerTest" min="0.1" step="0.5" placeholder="e.g. 3" class="has-suffix" oninput="calculate()">
             <span class="input-suffix">min</span>
           </div>
-          <div class="field-default" id="tptHint">Manual four-gas: typically 12 to 20 min per device</div>
+          <div class="field-default" id="tptHint">Manual: under 3 min per bump test for four-gas</div>
         </div>
         <div class="field">
           <label class="field-label">Fully-Loaded Hourly Rate <span class="tip-icon" data-tip="The true cost of technician time including base salary, benefits, overhead, and any contractor margin. Fully-loaded rates are typically 1.3–1.6x base salary.">?</span></label>
@@ -596,13 +596,25 @@
             <div class="field-default" id="calHint">Default: 4x (four-gas monitor, manual)</div>
           </div>
           <div class="field">
-            <label class="field-label">Retest Rate <span class="tip-icon" data-tip="Percentage of tests requiring a retest due to a device failing or an inconclusive result. Each retest consumes additional gas and technician time. Default is 0% for well-maintained fleets.">?</span></label>
+            <label class="field-label">Retest Rate <span class="tip-icon" data-tip="Percentage of tests requiring a retest due to a device failing or an inconclusive result. Each retest consumes additional gas and technician time. Applied equally to bump tests and calibrations. Default is 0% for well-maintained fleets.">?</span></label>
             <select id="retestRate" onchange="calculate()">
               <option value="0" selected>0%: No retests assumed</option>
               <option value="0.02">2%: Low retest rate</option>
               <option value="0.05">5%: Moderate retest rate</option>
               <option value="0.10">10%: High retest rate</option>
             </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Labour time multiplier -->
+        <div class="input-grid two-col" style="margin-bottom:16px">
+          <div class="field">
+            <label class="field-label">Labour Time Multiplier <span class="tip-icon" data-tip="How much longer a calibration event takes compared to a bump test, expressed as a ratio. For manual four-gas testing: bump tests under 3 minutes and calibrations under 7 minutes gives approximately 2.5x. For docking stations: bump handling approximately 1 minute and calibration handling 2 to 5 minutes gives approximately 3x. This mirrors the calibration gas multiplier logic, keeping the model consistent.">?</span></label>
+            <div class="input-wrap">
+              <input type="number" id="labMult" min="1" max="10" step="0.5" placeholder="2.5" class="has-suffix" oninput="calculate()">
+              <span class="input-suffix">x</span>
+            </div>
+            <div class="field-default" id="labMultHint">Default: 2.5x (manual: bump under 3 min, calibration under 7 min)</div>
           </div>
         </div>
 
@@ -638,13 +650,13 @@
       <h4>What This Calculator Models</h4>
       <p>This calculator helps safety and operations teams quantify the cost of their current gas detection testing regime and compare it against a risk-calibrated alternative based on modern sensor technology.</p>
       <p>It models the <strong>annual cost of routine interval-based bump testing and calibration</strong> for a portable gas detection fleet, comparing your current regime against validated intervals for LEL MPS sensor technology: up to 30-day bump test intervals and up to 180-day calibration intervals under appropriate conditions.</p>
-      <p>Costs are calculated across two dimensions: <strong>calibration gas consumption</strong> (cylinder volume, cost, and efficiency-adjusted usable volume per test) and <strong>technician labour</strong> (time per test event multiplied by fully-loaded hourly rate). Both dimensions are applied across the full fleet for the selected annual working period.</p>
+      <p>Costs are calculated across two dimensions: <strong>calibration gas consumption</strong> (cylinder volume, cost, and efficiency-adjusted usable volume per test) and <strong>technician labour</strong> (bump test time and calibration time, derived via a labour time multiplier, applied to event counts and multiplied by fully-loaded hourly rate). Both dimensions use a parallel structure: the user enters a bump test figure and a multiplier determines the calibration figure, for both gas and labour.</p>
       <h4>Prorated Annual Event Counts</h4>
       <p>Annual test counts are calculated as continuous prorated values rather than rounded integers. For example, a 30-day calibration interval applied over 365 calendar days yields 12.17 calibrations per device per year, and this figure is used directly in the cost calculation. The displayed test counts in the results are rounded to whole numbers for readability, which means the visible count may differ slightly from the underlying cost basis. This approach treats the annual figure as an expected-value estimate, which is appropriate for a cost modelling tool used over a full year across a fleet of devices. The methodology note makes this explicit because the displayed numbers look more concrete than they are.</p>
       <h4>Testing Method and Default Assumptions</h4>
-      <p>The calculator supports two testing configurations: Manual Testing and Docking Station. Selecting a configuration sets appropriate default values for gas consumed per bump test, the calibration gas multiplier, cylinder efficiency, and the technician time fallback used when no time is entered.</p>
-      <p><strong>Manual Testing</strong> defaults reflect a technician using a regulator and hose to bump and calibrate devices individually. Gas per bump test defaults to 0.3L for a four-gas monitor. The calibration multiplier defaults to 4x, reflecting approximately 1.2L per calibration. Cylinder efficiency defaults to 85%. Technician time is not pre-filled; the model uses 3 minutes as a fallback, reflecting bump tests under 3 minutes and calibrations under 7 minutes.</p>
-      <p><strong>Docking Station</strong> defaults reflect an automated station with precision metered flow. Gas per bump test defaults to 0.15L reflecting short-duration metered flow. The calibration multiplier defaults to 6x, reflecting approximately 1L per calibration against a 0.15L bump. Cylinder efficiency defaults to 90%. Technician time is not pre-filled; the model uses 1 minute as a fallback for sequential single-device loading. For multi-bay stations where devices are loaded simultaneously, this figure should be reduced significantly to reflect actual per-device handling time.</p>
+      <p>The calculator supports two testing configurations: Manual Testing and Docking Station. Selecting a configuration sets appropriate default values for gas consumed per bump test, the calibration gas multiplier, cylinder efficiency, the bump test time fallback, and the labour time multiplier.</p>
+      <p><strong>Manual Testing</strong> defaults reflect a technician using a regulator and hose to bump and calibrate devices individually. Gas per bump test defaults to 0.3L. The calibration gas multiplier defaults to 4x (approximately 1.2L per calibration). Cylinder efficiency defaults to 85%. Bump test time fallback is 3 minutes. Labour time multiplier defaults to 2.5x, reflecting calibrations taking approximately 2.5 times longer than bump tests.</p>
+      <p><strong>Docking Station</strong> defaults reflect an automated station with precision metered flow. Gas per bump test defaults to 0.15L. The calibration gas multiplier defaults to 6x (approximately 1L per calibration against a 0.15L bump). Cylinder efficiency defaults to 90%. Bump test time fallback is 1 minute for sequential single-device loading. Labour time multiplier defaults to 3x, reflecting calibration handling taking approximately 3 times longer than bump test handling. For multi-bay stations where devices are loaded simultaneously, the bump test time should be reduced to reflect actual per-device handling time.</p>
       <p>User-entered values for any field override the mode defaults in both configurations.</p>
       <h4>Working Days versus Calendar Days</h4>
       <p>Bump test frequency and calibration frequency are treated on different time bases, because they operate differently in practice. Bump tests are typically performed at shift start, so they follow working days: a daily bump test means one test per working day, and the annual count is driven by how many days per year the site operates. The working days input controls this directly.</p>
@@ -682,7 +694,7 @@
       </div>
       <h4>Important Limitations</h4>
       <p>Results are estimates and should be treated as a starting point for internal discussion. Actual savings depend on negotiated gas pricing, specific device and regulator configurations, the mix of sensor types in your fleet, and applicable regulatory requirements in your jurisdiction. This tool does not constitute compliance guidance. Always apply the most stringent requirements applicable to your site and consult your safety officer before modifying any testing SOP.</p>
-      <p><strong>Labour cost in docking station environments:</strong> The labour cost model multiplies time per device by the number of test events across the fleet. This assumes sequential single-device handling. In docking station environments with multi-bay stations, technicians load multiple devices simultaneously, which means the effective per-device labour time is a fraction of the single-device figure. For a 20-bay station, the effective per-device time may be under 10 seconds rather than 1 minute. Organisations with multi-bay stations should reduce the Time Per Test Event field to reflect their actual per-device handling time. Failure to do so will overstate both the absolute labour cost in Scenario A and the labour saving. The gas saving figure is not affected by this limitation.</p>
+      <p><strong>Labour cost in docking station environments:</strong> The labour cost model applies bump test time to bump events and calibration time (derived via the labour time multiplier) to calibration events. Both assume sequential single-device handling. In environments with multi-bay stations, technicians load multiple devices simultaneously, so the effective per-device time is a fraction of the single-device figure. Organisations with multi-bay stations should reduce the Time Per Bump Test field to reflect their actual per-device handling time. The gas saving figure is not affected by this limitation.</p>
       <p>This calculator was developed by <strong>Blackline Safety</strong> in collaboration with Nevada Nano, manufacturer of the LEL MPS sensor. It reflects Blackline Safety's point of view on the relationship between sensor diagnostic capability and maintenance interval design.</p>
     </div>
   </div>
@@ -758,19 +770,21 @@
   const MODES = {
     manual: {
       gpb:0.3, calMult:4.0, cylEff:0.85,
-      tptFallback: 3,
+      tptFallback: 3, labMultFallback: 2.5,
       gpbHint: '0.3L per bump test (four-gas monitor, manual)',
       calHint: '4x (four-gas monitor, manual: 0.3L bump, ~1.2L cal)',
-      tptHint: 'Manual: under 3 min for bump, under 7 min for calibration',
-      tptTip:  'Total minutes per test event. For manual four-gas testing: bump tests typically take under 3 minutes and calibrations under 7 minutes per device, including setup, sensor response time, logging, and downtime. Enter a blended figure that reflects your mix of bump and calibration events, or use the lower end if bump tests dominate your daily routine.',
+      tptHint: 'Manual: under 3 min per bump test for four-gas',
+      labMultHint: '2.5x (manual: bump under 3 min, calibration under 7 min)',
+      tptTip:  'Minutes per bump test, including setup, sensor exposure, and logging. For manual four-gas testing, bump tests typically take under 3 minutes per device. Calibration time is handled separately via the Labour Time Multiplier in Advanced Assumptions.',
     },
     docked: {
       gpb:0.15, calMult:6.0, cylEff:0.90,
-      tptFallback: 1,
+      tptFallback: 1, labMultFallback: 3.0,
       gpbHint: '0.15L per bump test (docking station, metered short-duration flow)',
       calHint: '6x (docked: 0.15L bump vs ~1L cal makes ratio higher than manual)',
-      tptHint: 'Docked: ~1 min per device for sequential loading. Reduce for multi-bay stations.',
-      tptTip:  'In a docking station environment, enter the technician\'s active handling time per device: loading and retrieving. For sequential single-device loading this is approximately 1 minute per device. If your station has multiple bays and devices are loaded simultaneously, the effective per-device time is much lower. For example, a 20-bay station loading 20 devices in one cycle has an effective handling time of under 10 seconds per device. Adjust this figure down to reflect your station capacity, as the default assumes sequential handling and will overstate labour cost for multi-bay deployments.',
+      tptHint: 'Docked: ~1 min per bump test (sequential). Reduce for multi-bay stations.',
+      labMultHint: '3x (docked: bump ~1 min, calibration 2 to 5 min)',
+      tptTip:  'Minutes per bump test for handling only: loading the device and retrieving it after the cycle completes. For sequential single-device loading this is approximately 1 minute. For multi-bay stations where devices are loaded simultaneously, the effective per-device time is much lower. Calibration handling time is derived separately via the Labour Time Multiplier in Advanced Assumptions.',
     },
   };
 
@@ -797,20 +811,23 @@
     // Always set cylEff: it lives in a hidden panel and the user cannot set it directly
     document.getElementById('cylinderEff').value = String(d.cylEff);
 
-    // Set gpb and calMult only if the user has not already entered a value
-    const gpbEl = document.getElementById('gasPerBump');
-    const cmEl  = document.getElementById('calMult');
-    if (!gpbEl.value) gpbEl.value = d.gpb;
-    if (!cmEl.value)  cmEl.value  = d.calMult;
+    // Set gpb, calMult, labMult only if the user has not already entered a value
+    const gpbEl    = document.getElementById('gasPerBump');
+    const cmEl     = document.getElementById('calMult');
+    const labMEl   = document.getElementById('labMult');
+    if (!gpbEl.value)  gpbEl.value  = d.gpb;
+    if (!cmEl.value)   cmEl.value   = d.calMult;
+    if (!labMEl.value) labMEl.value = d.labMultFallback;
 
-    // tpt: never pre-fill. Clear it on mode switch so the placeholder and hint
-    // reflect the new mode. The calculation uses tptFallback silently when empty.
+    // tpt and labMult: clear on mode switch so hints reflect new mode
     document.getElementById('timePerTest').value = '';
+    document.getElementById('labMult').value     = '';
 
     // Always update hint text and dynamic tooltip to reflect active mode
-    document.getElementById('gpbHint').textContent = 'Default: ' + d.gpbHint;
-    document.getElementById('calHint').textContent = 'Default: ' + d.calHint;
-    document.getElementById('tptHint').textContent = d.tptHint;
+    document.getElementById('gpbHint').textContent    = 'Default: ' + d.gpbHint;
+    document.getElementById('calHint').textContent    = 'Default: ' + d.calHint;
+    document.getElementById('tptHint').textContent    = d.tptHint;
+    document.getElementById('labMultHint').textContent = 'Default: ' + d.labMultHint;
     const tptIcon = document.getElementById('tptTipIcon');
     if (tptIcon) tptIcon.dataset.tip = d.tptTip;
 
@@ -883,7 +900,7 @@
   // ── RESET ──
   function resetAll() {
     // Clear all user-entered fields including mode-defaulted ones
-    ['devices','customDays','cylinderSize','cylinderCost','gasPerBump','calMult','timePerTest',
+    ['devices','customDays','cylinderSize','cylinderCost','gasPerBump','calMult','labMult','timePerTest',
      'hourlyRate','confinedSpace','devicesPerCS','eligibleDevices']
       .forEach(id => document.getElementById(id).value = '');
     document.getElementById('currencySelect').value = 'USD';
@@ -928,12 +945,12 @@
     // ── MODE-AWARE INPUTS ──
     const mode    = currentMode;
     const d       = MODES[mode];
-    let gpb, calMult, cylEff, tpt;
+    let gpb, calMult, cylEff, tpt, labMult;
 
     gpb     = gv('gasPerBump')  || d.gpb;
     calMult = gv('calMult')     || d.calMult;
     tpt     = gv('timePerTest') || d.tptFallback;
-    // cylEff: read from select with hard fallback to mode default
+    labMult = gv('labMult')     || d.labMultFallback;
     const rawEff = parseFloat(document.getElementById('cylinderEff').value);
     cylEff = isNaN(rawEff) ? d.cylEff : rawEff;
 
@@ -963,13 +980,15 @@
     if (!hasData) return;
 
     // Derived
-    const usable  = cylSz * cylEff;
-    const gpc     = gpb * calMult;
-    const cpl     = cylCost / usable;
-    const labMin  = tpt * (1 + retest);
-    const labHr   = labMin / 60;
-    const labCost = labHr * hr;
-    const csTests = csWk * 52 * dpcs;
+    const usable      = cylSz * cylEff;
+    const gpc         = gpb * calMult;
+    const cpl         = cylCost / usable;
+    const tptCal      = tpt * labMult;
+    const labHrBump   = tpt    * (1 + retest) / 60;
+    const labHrCal    = tptCal * (1 + retest) / 60;
+    const labCostBump = labHrBump * hr;
+    const labCostCal  = labHrCal  * hr;
+    const csTests     = csWk * 52 * dpcs;
 
     // SCENARIO A: full fleet, current intervals
     const sBpd = wd / curBump;
@@ -978,9 +997,9 @@
     const sCF  = sCpd * devices;
     const sGas = (sBF * gpb) + (sCF * gpc);
     const sGC  = sGas * cpl;
-    const sLC  = (sBF + sCF) * labCost;
+    const sLC  = (sBF * labCostBump) + (sCF * labCostCal);
     const csG  = csTests * gpb;
-    const csLC = csTests * labCost;
+    const csLC = csTests * labCostBump;
     const csC  = csG * cpl + csLC;
     const sT   = sGC + sLC + csC;
 
@@ -992,7 +1011,7 @@
     const aBF     = aBFe + aBFi;       const aCF  = aCFe + aCFi;
     const aGas    = (aBF * gpb) + (aCF * gpc);
     const aGC     = aGas * cpl;
-    const aLC     = (aBF + aCF) * labCost;
+    const aLC     = (aBF * labCostBump) + (aCF * labCostCal);
     const aT      = aGC + aLC + csC;
 
     // Populate Scenario A
@@ -1023,8 +1042,10 @@
     const saving  = sT - aT;
     const svGas   = sGC - aGC;
     const svLab   = sLC - aLC;
+    const svBumps = sBF - aBF;
+    const svCals  = sCF - aCF;
     const svTests = (sBF+sCF) - (aBF+aCF);
-    const svHrs   = svTests * labHr;
+    const svHrs   = (svBumps * labHrBump) + (svCals * labHrCal);
     const banner  = document.getElementById('savingBanner');
     const head    = document.getElementById('savingHead');
     banner.classList.add('show');
