@@ -221,6 +221,7 @@
   .saving-gas-callout { margin-top:12px; padding:10px 14px; background:var(--green-light); border-left:3px solid var(--green); border-radius:var(--radius); font-size:12px; color:var(--green); display:none; }
   .saving-gas-callout.show { display:block; }
   .saving-gas-callout strong { font-weight:600; }
+  .saving-labour-caveat { margin-top:8px; padding:9px 13px; background:#F5F5F5; border-left:3px solid #BBBBBB; border-radius:var(--radius); font-size:11px; color:var(--mid); line-height:1.5; }
 
   /* MODE FEEDBACK TOAST */
   .mode-toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--charcoal); color:white; font-size:12px; padding:8px 16px; border-radius:20px; opacity:0; transition:opacity 0.2s, transform 0.2s; pointer-events:none; z-index:300; white-space:nowrap; }
@@ -406,12 +407,12 @@
           </div>
         </div>
         <div class="field">
-          <label class="field-label">Gas Per Bump Test <span class="tip-icon" data-tip="Volume consumed per bump test. 0.8L is the default, reflecting a typical four-gas monitor (LEL, O2, H2S, CO) on a standard bump procedure. Single-gas devices typically consume 0.4 to 0.6L. Calibrations are calculated separately using the calibration gas multiplier in Advanced Assumptions.">?</span></label>
+          <label class="field-label">Gas Per Bump Test <span class="tip-icon" data-tip="Volume consumed per bump test. For manual four-gas testing, approximately 0.3L per bump test. For docking stations with precision metered flow, approximately 0.15L per bump test. Calibration gas volume is calculated separately using the calibration gas multiplier in Advanced Assumptions.">?</span></label>
           <div class="input-wrap">
-            <input type="number" id="gasPerBump" min="0.1" step="0.1" placeholder="0.8" class="has-suffix" oninput="calculate()">
+            <input type="number" id="gasPerBump" min="0.05" step="0.05" placeholder="0.3" class="has-suffix" oninput="calculate()">
             <span class="input-suffix">L</span>
           </div>
-          <div class="field-default" id="gpbHint">Default: 0.8L per bump test (four-gas monitor, manual)</div>
+          <div class="field-default" id="gpbHint">Default: 0.3L per bump test (four-gas monitor, manual)</div>
         </div>
       </div>
     </div>
@@ -508,6 +509,7 @@
           <div class="saving-item saving-item-secondary"><div class="saving-item-lbl">Technician hours saved / yr</div><div class="saving-item-val saving-item-val-sm" id="savingHours">-</div></div>
         </div>
         <div class="saving-gas-callout" id="savingGasCallout"></div>
+        <div class="saving-labour-caveat" id="savingLabourCaveat" style="display:none"></div>
         <div class="saving-neg" id="savingNeg" style="display:none"></div>
       </div>
     </div>
@@ -586,9 +588,9 @@
             </select>
           </div>
           <div class="field">
-            <label class="field-label">Calibration Gas Multiplier <span class="tip-icon" data-tip="How much more gas a calibration event uses compared to a bump test. Four-gas monitors (LEL, O2, H2S, CO) typically fall between 3.5x and 5x due to longer procedure time and multi-sensor exposure requirements. Single-gas devices are typically 2x to 3x. Increase this value if your calibration procedure includes sensor stabilisation time or sequential passes per sensor.">?</span></label>
+            <label class="field-label">Calibration Gas Multiplier <span class="tip-icon" data-tip="How much more gas a calibration event uses compared to a bump test, expressed as a ratio. For manual four-gas testing: approximately 0.3L bump and 1.2L calibration gives a ratio of 4x. For docking stations: approximately 0.15L bump and 1L calibration gives a ratio of 6x. The docked ratio is higher not because calibration uses more gas in absolute terms, but because docked bump gas consumption is much lower, making the ratio larger. Adjust if your procedure differs.">?</span></label>
             <div class="input-wrap">
-              <input type="number" id="calMult" min="1" max="8" step="0.5" placeholder="4" class="has-suffix" oninput="calculate()">
+              <input type="number" id="calMult" min="1" max="10" step="0.5" placeholder="4" class="has-suffix" oninput="calculate()">
               <span class="input-suffix">x</span>
             </div>
             <div class="field-default" id="calHint">Default: 4x (four-gas monitor, manual)</div>
@@ -641,8 +643,8 @@
       <p>Annual test counts are calculated as continuous prorated values rather than rounded integers. For example, a 30-day calibration interval applied over 365 calendar days yields 12.17 calibrations per device per year, and this figure is used directly in the cost calculation. The displayed test counts in the results are rounded to whole numbers for readability, which means the visible count may differ slightly from the underlying cost basis. This approach treats the annual figure as an expected-value estimate, which is appropriate for a cost modelling tool used over a full year across a fleet of devices. The methodology note makes this explicit because the displayed numbers look more concrete than they are.</p>
       <h4>Testing Method and Default Assumptions</h4>
       <p>The calculator supports two testing configurations: Manual Testing and Docking Station. Selecting a configuration sets appropriate default values for gas consumed per bump test, the calibration gas multiplier, cylinder efficiency, and the technician time fallback used when no time is entered.</p>
-      <p><strong>Manual Testing</strong> defaults reflect a technician using a regulator and hose to bump and calibrate devices individually. Gas per bump test defaults to 0.8L for a four-gas monitor. The calibration multiplier defaults to 4x. Cylinder efficiency defaults to 85%. Technician time is not pre-filled but the model uses 15 minutes as a fallback if the field is left blank.</p>
-      <p><strong>Docking Station</strong> defaults reflect an automated station that controls gas flow precisely and runs test cycles unattended. Gas per bump test defaults to 0.6L reflecting tighter metered flow. The calibration multiplier defaults to 3x reflecting a more controlled, shorter calibration cycle. Cylinder efficiency defaults to 90% reflecting engineered connections with minimal purge loss. Technician time represents handling time only: loading and retrieving the device. The model uses 2 minutes as a fallback. The station's autonomous cycle time carries no labour cost and should not be included in the time per test field.</p>
+      <p><strong>Manual Testing</strong> defaults reflect a technician using a regulator and hose to bump and calibrate devices individually. Gas per bump test defaults to 0.3L for a four-gas monitor. The calibration multiplier defaults to 4x, reflecting approximately 1.2L per calibration. Cylinder efficiency defaults to 85%. Technician time is not pre-filled; the model uses 3 minutes as a fallback, reflecting bump tests under 3 minutes and calibrations under 7 minutes.</p>
+      <p><strong>Docking Station</strong> defaults reflect an automated station with precision metered flow. Gas per bump test defaults to 0.15L reflecting short-duration metered flow. The calibration multiplier defaults to 6x, reflecting approximately 1L per calibration against a 0.15L bump. Cylinder efficiency defaults to 90%. Technician time is not pre-filled; the model uses 1 minute as a fallback for sequential single-device loading. For multi-bay stations where devices are loaded simultaneously, this figure should be reduced significantly to reflect actual per-device handling time.</p>
       <p>User-entered values for any field override the mode defaults in both configurations.</p>
       <h4>Working Days versus Calendar Days</h4>
       <p>Bump test frequency and calibration frequency are treated on different time bases, because they operate differently in practice. Bump tests are typically performed at shift start, so they follow working days: a daily bump test means one test per working day, and the annual count is driven by how many days per year the site operates. The working days input controls this directly.</p>
@@ -651,9 +653,10 @@
       <h4>Cylinder Efficiency Factor</h4>
       <p>Cylinders are never fully exhausted in practice. Gas is lost during regulator connection and purging (typically 0.1–0.3L per connection event), and residual gas cannot be extracted once cylinder pressure drops below the regulator's minimum operating threshold (approximately 10–15% of cylinder volume). The efficiency factor, defaulted to 85%, adjusts the usable cylinder volume to reflect real-world conditions rather than theoretical capacity.</p>
       <h4>Calibration Gas Volume</h4>
-      <p>Full calibration events consume more gas than bump tests. The calibration gas multiplier, set in the Advanced Assumptions section, controls this ratio. The default is <strong>4x</strong>, reflecting a typical four-gas monitor (LEL, O2, H2S, CO) where all sensors are exposed during a single calibration event. This figure is higher than for single-gas devices because the procedure is longer and requires adequate sensor response across multiple gas types.</p>
+      <p>Full calibration events consume more gas than bump tests. The calibration gas multiplier, set in the Advanced Assumptions section, controls this ratio as a multiple of the bump test gas volume.</p>
+      <p>For <strong>manual four-gas testing</strong>, a bump test consumes approximately 0.3L and a calibration approximately 1.2L, giving a ratio of 4x. For <strong>docking station testing</strong>, a bump test consumes approximately 0.15L due to precision metered short-duration flow, while a calibration still consumes approximately 1L, giving a ratio of 6x. The docked ratio is higher not because calibration uses more gas in absolute terms, but because docked bump gas consumption is significantly lower, which amplifies the ratio. These figures are based on QA-validated measurements for standard four-gas monitors.</p>
       <p>In standard four-gas monitors, the LEL sensor is the primary driver of bump test and calibration frequency. The catalytic bead LEL sensor can be poisoned by silicones, sulphur compounds, and halogens, and critically it fails silently without alerting the user. This silent-failure risk is the technical basis for the industry-wide daily bump test requirement. MPS sensors do not use a catalyst and cannot be poisoned, removing this failure mode and changing the technical basis for the interval. The O2, H2S, and CO sensors in a four-gas monitor use electrochemical technology that drifts predictably and fails with an alarm signal rather than silently, meaning they do not drive the interval frequency in the same way.</p>
-      <p>Single-gas devices or organisations with primarily single-sensor fleets should reduce the calibration multiplier to 2x to 3x. Multi-gas devices with longer stabilisation procedures may be at 4.5x to 5x or higher. The field accepts one decimal place to allow precise adjustment.</p>
+      <p>Single-gas devices should use a lower multiplier, typically 2x to 3x. The field accepts values in 0.5x increments to allow precise adjustment.</p>
       <h4>Confined Space Pre-Entry Testing</h4>
       <p>Confined space pre-entry bump testing is a regulatory requirement in most jurisdictions regardless of sensor type or testing interval. This calculator models confined space testing as a <strong>site-level cost</strong> based on the number of entry events per week and the number of devices used per entry (crew size), applied across 52 calendar weeks per year. This cost is added equally to both scenarios; it does not influence the saving calculation but produces a more accurate total cost picture for sites where confined space work is a regular activity.</p>
       <h4>Eligible Devices and Fleet Composition</h4>
@@ -679,6 +682,7 @@
       </div>
       <h4>Important Limitations</h4>
       <p>Results are estimates and should be treated as a starting point for internal discussion. Actual savings depend on negotiated gas pricing, specific device and regulator configurations, the mix of sensor types in your fleet, and applicable regulatory requirements in your jurisdiction. This tool does not constitute compliance guidance. Always apply the most stringent requirements applicable to your site and consult your safety officer before modifying any testing SOP.</p>
+      <p><strong>Labour cost in docking station environments:</strong> The labour cost model multiplies time per device by the number of test events across the fleet. This assumes sequential single-device handling. In docking station environments with multi-bay stations, technicians load multiple devices simultaneously, which means the effective per-device labour time is a fraction of the single-device figure. For a 20-bay station, the effective per-device time may be under 10 seconds rather than 1 minute. Organisations with multi-bay stations should reduce the Time Per Test Event field to reflect their actual per-device handling time. Failure to do so will overstate both the absolute labour cost in Scenario A and the labour saving. The gas saving figure is not affected by this limitation.</p>
       <p>This calculator was developed by <strong>Blackline Safety</strong> in collaboration with Nevada Nano, manufacturer of the LEL MPS sensor. It reflects Blackline Safety's point of view on the relationship between sensor diagnostic capability and maintenance interval design.</p>
     </div>
   </div>
@@ -753,20 +757,20 @@
   // ── TESTING METHOD DEFAULTS ──
   const MODES = {
     manual: {
-      gpb:0.8, calMult:4.0, cylEff:0.85,
-      tptFallback: 15,
-      gpbHint: '0.8L per bump test (four-gas monitor, manual)',
-      calHint: '4x (four-gas monitor, manual)',
-      tptHint: 'Manual four-gas: typically 12 to 20 min per device',
-      tptTip:  'Total minutes per test event including setup, the test itself, device logging, and any downtime. Four-gas monitors tested manually typically require 12 to 20 minutes per device: the technician must connect the regulator, wait for all four sensors to respond, verify readings, and log results. Single-gas devices typically take 5 to 10 minutes.',
+      gpb:0.3, calMult:4.0, cylEff:0.85,
+      tptFallback: 3,
+      gpbHint: '0.3L per bump test (four-gas monitor, manual)',
+      calHint: '4x (four-gas monitor, manual: 0.3L bump, ~1.2L cal)',
+      tptHint: 'Manual: under 3 min for bump, under 7 min for calibration',
+      tptTip:  'Total minutes per test event. For manual four-gas testing: bump tests typically take under 3 minutes and calibrations under 7 minutes per device, including setup, sensor response time, logging, and downtime. Enter a blended figure that reflects your mix of bump and calibration events, or use the lower end if bump tests dominate your daily routine.',
     },
     docked: {
-      gpb:0.6, calMult:3.0, cylEff:0.90,
-      tptFallback: 2,
-      gpbHint: '0.6L per bump test (docking station, metered flow)',
-      calHint: '3x (docking station, tighter calibration cycle)',
-      tptHint: 'Docking station: enter technician handling time only (typically 1 to 3 min)',
-      tptTip:  'In a docking station environment, enter the technician\'s active handling time per device only: loading the device into the station and retrieving it after the cycle completes. The station runs the bump test or calibration autonomously. Handling time is typically 1 to 3 minutes per device. Do not enter the total station cycle time, which includes unattended machine time that carries no labour cost.',
+      gpb:0.15, calMult:6.0, cylEff:0.90,
+      tptFallback: 1,
+      gpbHint: '0.15L per bump test (docking station, metered short-duration flow)',
+      calHint: '6x (docked: 0.15L bump vs ~1L cal makes ratio higher than manual)',
+      tptHint: 'Docked: ~1 min per device for sequential loading. Reduce for multi-bay stations.',
+      tptTip:  'In a docking station environment, enter the technician\'s active handling time per device: loading and retrieving. For sequential single-device loading this is approximately 1 minute per device. If your station has multiple bays and devices are loaded simultaneously, the effective per-device time is much lower. For example, a 20-bay station loading 20 devices in one cycle has an effective handling time of under 10 seconds per device. Adjust this figure down to reflect your station capacity, as the default assumes sequential handling and will overstate labour cost for multi-bay deployments.',
     },
   };
 
@@ -1076,6 +1080,15 @@
       callout.classList.add('show');
     } else {
       callout.classList.remove('show');
+    }
+
+    // Labour caveat: show in docked mode to flag multi-bay station limitation
+    const labCaveat = document.getElementById('savingLabourCaveat');
+    if (isDocked && svLab > 0 && saving > 0) {
+      labCaveat.textContent = 'Labour saving assumes sequential device handling. For multi-bay stations where devices are loaded simultaneously, actual per-device time is lower and this figure may overstate the labour saving. Adjust the Time Per Test Event field to reflect your station capacity.';
+      labCaveat.style.display = 'block';
+    } else {
+      labCaveat.style.display = 'none';
     }
 
     document.getElementById('results').classList.add('animate-in');
