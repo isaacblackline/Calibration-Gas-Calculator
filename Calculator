@@ -127,6 +127,9 @@
   .interval-warn { display:none; margin-top:8px; padding:8px 12px; background:var(--amber-light); border-left:3px solid var(--amber); border-radius:var(--radius); font-size:11px; color:var(--amber); }
   .interval-warn.show { display:block; }
 
+  /* GAS VALIDATION WARNING */
+  .gas-warn { display:flex; align-items:flex-start; gap:9px; margin-bottom:16px; padding:11px 14px; background:var(--amber-light); border-left:3px solid var(--amber); border-radius:var(--radius); font-size:12px; color:var(--amber); line-height:1.55; }
+
   /* SCENARIO CARDS */
   .scenario-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   @media(max-width:640px){ .scenario-grid{ grid-template-columns:1fr; } }
@@ -162,6 +165,11 @@
   .saving-item-secondary .saving-item-lbl { color:#9A9A9A; }
   .saving-item-val-sm { font-size:13px; color:#5A9A7A; }
   .saving-neg { background:var(--amber-light); border-left:3px solid var(--amber); padding:12px 16px; border-radius:var(--radius); margin-top:16px; font-size:13px; color:var(--amber); }
+  .saving-actions { display:flex; gap:10px; margin-top:16px; padding-top:16px; border-top:1px solid var(--border); flex-wrap:wrap; }
+  .copy-btn, .print-btn { display:flex; align-items:center; gap:6px; background:none; border:1.5px solid var(--border); border-radius:var(--radius); padding:7px 14px; font-family:var(--font-body); font-size:12px; font-weight:500; color:var(--slate); cursor:pointer; transition:all 0.15s; }
+  .copy-btn:hover { border-color:var(--green); color:var(--green); background:var(--green-light); }
+  .print-btn:hover { border-color:var(--slate); color:var(--black); background:#F5F5F5; }
+  .copy-btn.copied { border-color:var(--green); color:var(--green); background:var(--green-light); }
 
   /* METHODOLOGY */
   .methodology { margin-top:40px; border:1.5px solid var(--border); border-radius:var(--radius-lg); }
@@ -226,6 +234,27 @@
   /* MODE FEEDBACK TOAST */
   .mode-toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--charcoal); color:white; font-size:12px; padding:8px 16px; border-radius:20px; opacity:0; transition:opacity 0.2s, transform 0.2s; pointer-events:none; z-index:300; white-space:nowrap; }
   .mode-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* PRINT STYLES */
+  @media print {
+    * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .site-header, .hero, .reset-bar, .section-label, .method-card,
+    .card, .progress-nudge, .adjust-panel, .methodology,
+    .saving-actions, .mode-toast, .tip-bubble, .gas-warn { display:none !important; }
+    body { background:white; font-size:12px; }
+    .main { padding:0; max-width:100%; }
+    .results-section { display:block !important; }
+    .divider { display:none; }
+    .section-label { display:none !important; }
+    .scenario-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .saving-banner { box-shadow:none; border:1.5px solid #CCC; }
+    .saving-head { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .site-footer { padding:12px 0; background:white !important; border-top:1px solid #DDD; }
+    .footer-logo span { color:#111 !important; }
+    .footer-note { color:#555 !important; }
+    .print-header { display:flex !important; }
+  }
+  .print-header { display:none; justify-content:space-between; align-items:center; padding-bottom:12px; margin-bottom:16px; border-bottom:2px solid var(--red); }
 
   .site-footer { background:var(--black); padding:20px 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
   .footer-logo { display:flex; align-items:center; font-family:var(--font-body); font-weight:600; font-size:14px; }
@@ -456,8 +485,18 @@
   <!--  RESULTS: visible once essential inputs are set  -->
   <!-- ═══════════════════════════════════════════════════ -->
   <div class="results-section" id="results">
+    <div class="print-header">
+      <div style="font-family:'DM Sans',sans-serif;font-weight:600;font-size:16px"><span style="color:#111">blackline</span><span style="color:#C41230">safety</span></div>
+      <div style="font-size:11px;color:#666" id="printDate"></div>
+    </div>
     <div class="divider"></div>
     <div class="section-label">Cost Comparison</div>
+
+    <!-- GAS VALIDATION WARNING: shown when gpb or cal gas exceeds usable cylinder -->
+    <div class="gas-warn" id="gasWarn" style="display:none">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0;margin-top:1px"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5a.905.905 0 0 1 .9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+      <span id="gasWarnText"></span>
+    </div>
 
     <!-- SCENARIO COLUMNS -->
     <div class="scenario-grid">
@@ -511,6 +550,16 @@
         <div class="saving-gas-callout" id="savingGasCallout"></div>
         <div class="saving-labour-caveat" id="savingLabourCaveat" style="display:none"></div>
         <div class="saving-neg" id="savingNeg" style="display:none"></div>
+        <div class="saving-actions">
+          <button class="copy-btn" id="copyBtn" onclick="copySummary()">
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1H2z"/></svg>
+            Copy results summary
+          </button>
+          <button class="print-btn" onclick="window.print()">
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/></svg>
+            Print / save as PDF
+          </button>
+        </div>
       </div>
     </div>
 
@@ -655,8 +704,8 @@
       <p>Annual test counts are calculated as continuous prorated values rather than rounded integers. For example, a 30-day calibration interval applied over 365 calendar days yields 12.17 calibrations per device per year, and this figure is used directly in the cost calculation. The displayed test counts in the results are rounded to whole numbers for readability, which means the visible count may differ slightly from the underlying cost basis. This approach treats the annual figure as an expected-value estimate, which is appropriate for a cost modelling tool used over a full year across a fleet of devices. The methodology note makes this explicit because the displayed numbers look more concrete than they are.</p>
       <h4>Testing Method and Default Assumptions</h4>
       <p>The calculator supports two testing configurations: Manual Testing and Docking Station. Selecting a configuration sets appropriate default values for gas consumed per bump test, the calibration gas multiplier, cylinder efficiency, the bump test time fallback, and the labour time multiplier.</p>
-      <p><strong>Manual Testing</strong> defaults reflect a technician using a regulator and hose to bump and calibrate devices individually. Gas per bump test defaults to 0.3L. The calibration gas multiplier defaults to 4x (approximately 1.2L per calibration). Cylinder efficiency defaults to 85%. Bump test time fallback is 3 minutes. Labour time multiplier defaults to 2.5x, reflecting calibrations taking approximately 2.5 times longer than bump tests.</p>
-      <p><strong>Docking Station</strong> defaults reflect an automated station with precision metered flow. Gas per bump test defaults to 0.15L. The calibration gas multiplier defaults to 6x (approximately 1L per calibration against a 0.15L bump). Cylinder efficiency defaults to 90%. Bump test time fallback is 1 minute for sequential single-device loading. Labour time multiplier defaults to 3x, reflecting calibration handling taking approximately 3 times longer than bump test handling. For multi-bay stations where devices are loaded simultaneously, the bump test time should be reduced to reflect actual per-device handling time.</p>
+      <p><strong>Manual Testing</strong> defaults reflect a technician using a regulator and hose to bump and calibrate devices individually. Gas per bump test defaults to 0.3L. The calibration gas multiplier defaults to 4x (approximately 1.2L per calibration). Cylinder efficiency defaults to 85%. Bump test time fallback is 3 minutes. Labour time multiplier defaults to 2.5x — meaning calibrations are modelled as taking approximately 7.5 minutes against a 3-minute bump test, consistent with QA-validated figures of under 3 minutes for bump and under 7 minutes for calibration.</p>
+      <p><strong>Docking Station</strong> defaults reflect an automated station with precision metered flow. Gas per bump test defaults to 0.15L. The calibration gas multiplier defaults to 6x (approximately 1L per calibration against a 0.15L bump). Cylinder efficiency defaults to 90%. Bump test time fallback is 1 minute for sequential single-device loading. Labour time multiplier defaults to 3x — meaning calibration handling is modelled as approximately 3 minutes against a 1-minute bump test, consistent with QA-validated handling times of approximately 1 minute for bump and 2 to 5 minutes for calibration. For multi-bay stations where devices are loaded simultaneously, the bump test time should be reduced to reflect actual per-device handling time.</p>
       <p>User-entered values for any field override the mode defaults in both configurations.</p>
       <h4>Working Days versus Calendar Days</h4>
       <p>Bump test frequency and calibration frequency are treated on different time bases, because they operate differently in practice. Bump tests are typically performed at shift start, so they follow working days: a daily bump test means one test per working day, and the annual count is driven by how many days per year the site operates. The working days input controls this directly.</p>
@@ -769,7 +818,7 @@
   // ── TESTING METHOD DEFAULTS ──
   const MODES = {
     manual: {
-      gpb:0.3, calMult:4.0, cylEff:0.85,
+      gpb:0.3, calMult:4.0, cylEff:0.85, cylEffVal:'0.85',
       tptFallback: 3, labMultFallback: 2.5,
       gpbPlaceholder: 'e.g. 0.3', calMultPlaceholder: 'e.g. 4',
       tptPlaceholder: 'e.g. 3',   labMultPlaceholder: 'e.g. 2.5',
@@ -780,7 +829,7 @@
       tptTip:  'Minutes per bump test, including setup, sensor exposure, and logging. For manual four-gas testing, bump tests typically take under 3 minutes per device. Calibration time is handled separately via the Labour Time Multiplier in Advanced Assumptions.',
     },
     docked: {
-      gpb:0.15, calMult:6.0, cylEff:0.90,
+      gpb:0.15, calMult:6.0, cylEff:0.90, cylEffVal:'0.90',
       tptFallback: 1, labMultFallback: 3.0,
       gpbPlaceholder: 'e.g. 0.15', calMultPlaceholder: 'e.g. 6',
       tptPlaceholder: 'e.g. 1',    labMultPlaceholder: 'e.g. 3',
@@ -813,16 +862,22 @@
     const d = MODES[mode];
 
     // cylEff: always set directly: lives in hidden panel, user cannot see it
-    document.getElementById('cylinderEff').value = String(d.cylEff);
+    document.getElementById('cylinderEff').value = d.cylEffVal;
 
-    // gpb, calMult, tpt, labMult: never pre-fill.
-    // Clear on mode switch so placeholders and hints reflect the new mode.
-    // The calculation uses fallback values silently when fields are empty.
+    // calMult and labMult: populate with mode default if empty so Advanced
+    // Assumptions panel shows the value the model is actually using.
+    // On mode switch, clear first so they repopulate with the new mode's values.
+    const cmEl   = document.getElementById('calMult');
+    const labMEl = document.getElementById('labMult');
+    if (isSwitch) { cmEl.value = ''; labMEl.value = ''; }
+    if (!cmEl.value)   cmEl.value   = d.calMult;
+    if (!labMEl.value) labMEl.value = d.labMultFallback;
+
+    // gpb and tpt: never pre-fill. Clear on mode switch so placeholders update.
+    // The calculation uses fallback values silently when these fields are empty.
     if (isSwitch) {
       document.getElementById('gasPerBump').value  = '';
-      document.getElementById('calMult').value     = '';
       document.getElementById('timePerTest').value = '';
-      document.getElementById('labMult').value     = '';
     }
 
     // Update placeholders dynamically to reflect active mode suggestion
@@ -998,6 +1053,19 @@
     const labCostCal  = labHrCal  * hr;
     const csTests     = csWk * 52 * dpcs;
 
+    // ── GAS VALIDATION ──
+    const gasWarn = document.getElementById('gasWarn');
+    const gasWarnText = document.getElementById('gasWarnText');
+    if (gpb >= usable) {
+      gasWarnText.textContent = 'Your gas per bump test (' + gpb + 'L) equals or exceeds your usable cylinder volume (' + Math.round(usable * 100) / 100 + 'L). A single bump test would exhaust the cylinder. Check your cylinder size, efficiency, and gas consumption figures.';
+      gasWarn.style.display = 'flex';
+    } else if (gpc >= usable) {
+      gasWarnText.textContent = 'Your calibration gas volume (' + Math.round(gpc * 100) / 100 + 'L per event) exceeds your usable cylinder volume (' + Math.round(usable * 100) / 100 + 'L). Each calibration would require more than one cylinder. Check your cylinder size and calibration gas multiplier.';
+      gasWarn.style.display = 'flex';
+    } else {
+      gasWarn.style.display = 'none';
+    }
+
     // SCENARIO A: full fleet, current intervals
     const sBpd = wd / curBump;
     const sCpd = 365 / curCal;
@@ -1123,11 +1191,85 @@
     document.getElementById('results').classList.add('animate-in');
   }
 
+  // ── COPY SUMMARY ──
+  function copySummary() {
+    const mode  = currentMode === 'docked' ? 'Docking Station' : 'Manual Testing';
+    const date  = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+    const get   = id => document.getElementById(id).textContent.trim();
+
+    const getVal  = id => document.getElementById(id).value || '-';
+    const getSelLabel = id => {
+      const el = document.getElementById(id);
+      return el.options[el.selectedIndex]?.text || '-';
+    };
+
+    const lines = [
+      'BLACKLINE SAFETY — Gas Detection Cost Calculator',
+      'Generated: ' + date,
+      '',
+      'FLEET CONFIGURATION',
+      'Testing method:      ' + mode,
+      'Devices:             ' + (document.getElementById('devices').value || '-'),
+      'Working days / yr:   ' + getSelLabel('workingDays'),
+      'Currency:            ' + document.getElementById('currencySelect').value,
+      '',
+      'KEY INPUTS',
+      'Cylinder size:       ' + getVal('cylinderSize') + ' L',
+      'Cylinder cost:       ' + currSym + getVal('cylinderCost'),
+      'Gas per bump test:   ' + (getVal('gasPerBump') !== '-' ? getVal('gasPerBump') : d.gpb) + ' L',
+      'Cal gas multiplier:  ' + (getVal('calMult') !== '-' ? getVal('calMult') : d.calMult) + 'x',
+      'Time per bump test:  ' + (getVal('timePerTest') !== '-' ? getVal('timePerTest') : d.tptFallback) + ' min',
+      'Labour multiplier:   ' + (getVal('labMult') !== '-' ? getVal('labMult') : d.labMultFallback) + 'x',
+      'Hourly rate:         ' + currSym + getVal('hourlyRate') + '/hr',
+      'Cylinder efficiency: ' + getSelLabel('cylinderEff'),
+      'Retest rate:         ' + getSelLabel('retestRate'),
+      '',
+      'SCENARIO A — ' + get('currentIntervalLabel'),
+      'Bump tests / yr:     ' + get('sBumpTests'),
+      'Calibrations / yr:   ' + get('sCalTests'),
+      'Gas cost:            ' + get('sGasCost'),
+      'Labour cost:         ' + get('sLabourCost'),
+      'Annual total:        ' + get('sTotal'),
+      '',
+      'SCENARIO B — ' + get('altIntervalLabel'),
+      'Bump tests / yr:     ' + get('aBumpTests'),
+      'Calibrations / yr:   ' + get('aCalTests'),
+      'Gas cost:            ' + get('aGasCost'),
+      'Labour cost:         ' + get('aLabourCost'),
+      'Annual total:        ' + get('aTotal'),
+      '',
+      'ESTIMATED ANNUAL SAVING',
+      get('savingAmt') + '  (' + get('savingSub') + ')',
+      'Gas cost saving:     ' + get('savingGas'),
+      'Labour cost saving:  ' + get('savingLabour'),
+      'Fewer tests / yr:    ' + get('savingTests'),
+      'Hours saved / yr:    ' + get('savingHours'),
+      '',
+      'Results are estimates based on inputs provided. Not a compliance document.',
+      'Blackline Safety — blacklinesafety.com',
+    ];
+
+    const text = lines.join('\n');
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.classList.add('copied');
+      btn.innerHTML = '<svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/></svg> Copied to clipboard';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = '<svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1H2z"/></svg> Copy results summary';
+      }, 2500);
+    }).catch(() => {
+      alert('Copy failed. Please select and copy the results manually.');
+    });
+  }
+
   window.addEventListener('load', () => {
     track('altBumpSlider', 1, 30);
     track('altCalSlider', 30, 180);
     setCurrency('USD');
     setMode('manual');
+    const pd = document.getElementById('printDate');
+    if (pd) pd.textContent = 'Gas Detection Cost Calculator — ' + new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
   });
 </script>
 </body>
