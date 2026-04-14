@@ -400,7 +400,7 @@
         </div>
         <div class="field">
           <label class="field-label" for="currentCal">Calibration Frequency <button type="button" class="tip-icon" aria-hidden="true" data-tip="How often full calibrations are performed today. Calibration frequency follows calendar days: a 30-day calibration interval means every 30 calendar days regardless of how many are working days, so a fleet calibrates approximately 12 times per year on a monthly interval. This is how calibration intervals are defined in regulatory frameworks and SOPs." aria-label="More information">?</button></label>
-          <select id="currentCal" onchange="calculate()">
+          <select id="currentCal" onchange="handleCal()">
             <option value="1">Daily (every calendar day)</option>
             <option value="7">Weekly</option>
             <option value="14">Every 2 weeks</option>
@@ -408,8 +408,17 @@
             <option value="60">Every 60 days</option>
             <option value="90">Every 90 days</option>
             <option value="180">Every 180 days</option>
+            <option value="custom">Custom interval</option>
           </select>
         </div>
+      </div>
+      <div class="field" id="customCalField" style="display:none;margin-top:16px;max-width:280px">
+        <label class="field-label" for="customCal">Custom Calibration Interval</label>
+        <div class="input-wrap">
+          <input type="number" id="customCal" min="1" max="365" placeholder="e.g. 45" class="has-suffix" oninput="calculate()">
+          <span class="input-suffix">days</span>
+        </div>
+        <div class="field-default">Enter your calibration interval in calendar days</div>
       </div>
       <div class="interval-callout" style="margin-top:16px;margin-bottom:0">
         <svg class="interval-callout-icon" viewBox="0 0 16 16" width="14" height="14" fill="#2E7EC0"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 1.5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zM8 4a.75.75 0 100 1.5A.75.75 0 008 4zm-.75 2.5a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4z"/></svg>
@@ -719,7 +728,7 @@
       <p><strong>Docking Station</strong> defaults reflect an automated station with precision metered flow. Gas per bump test defaults to 0.15L. The calibration gas multiplier defaults to 6x (approximately 1L per calibration against a 0.15L bump). Cylinder efficiency defaults to 90%. Bump test time fallback is 1 minute for sequential single-device loading. Labour time multiplier defaults to 3x — meaning calibration handling is modelled as approximately 3 minutes against a 1-minute bump test, consistent with QA-validated handling times of approximately 1 minute for bump and 2 to 5 minutes for calibration. For multi-bay stations where devices are loaded simultaneously, the bump test time should be reduced to reflect actual per-device handling time.</p>
       <p>User-entered values for any field override the mode defaults in both configurations.</p>
       <h4>Working Days versus Calendar Days</h4>
-      <p>Bump test frequency and calibration frequency are treated on different time bases, because they operate differently in practice. Bump tests are typically performed at shift start, so they follow working days: a daily bump test means one test per working day, and the annual count is driven by how many days per year the site operates. The working days input controls this directly.</p>
+      <p>Bump test frequency and calibration frequency are treated on different time bases, because they operate differently in practice. Bump tests at daily, 2-day, and 3-day intervals follow working days: a daily bump test means one test per working day, and the annual count is driven by how many days per year the site operates. Weekly and fortnightly bump intervals follow calendar days, since "weekly" universally implies once per calendar week (approximately 52 times per year) regardless of working schedule. The 30-working-day interval uses a working-day basis as its label makes explicit.</p>
       <p>Calibration intervals, by contrast, are always defined in calendar days in every regulatory framework and industry SOP this calculator is designed to support. A 30-day calibration interval means every 30 calendar days regardless of how many of those are working days. The calculator therefore computes annual calibrations as 365 divided by the calibration interval, independent of the working days input. The working days input affects bump test frequency and labour cost only.</p>
       <p>Confined space entry frequency is similarly calendar-based. The calculator uses 52 fixed weeks per year for confined space cost, not a derived working-week count.</p>
       <h4>Cylinder Efficiency Factor</h4>
@@ -982,6 +991,11 @@
       document.getElementById('workingDays').value === 'custom' ? 'block' : 'none';
     calculate();
   }
+  function handleCal() {
+    document.getElementById('customCalField').style.display =
+      document.getElementById('currentCal').value === 'custom' ? 'block' : 'none';
+    calculate();
+  }
 
   // ── SLIDERS ──
   function onSlider() {
@@ -1023,7 +1037,7 @@
   // ── RESET ──
   function resetAll() {
     // Clear all user-entered fields including mode-defaulted ones
-    ['devices','customDays','cylinderSize','cylinderCost','gasPerBump','calMult','labMult','timePerTest',
+    ['devices','customDays','customCal','cylinderSize','cylinderCost','gasPerBump','calMult','labMult','timePerTest',
      'hourlyRate','confinedSpace','devicesPerCS','eligibleDevices']
       .forEach(id => document.getElementById(id).value = '');
     document.getElementById('currencySelect').value = 'USD';
@@ -1033,6 +1047,7 @@
     document.getElementById('currentCal').value  = '30';
     document.getElementById('retestRate').value  = '0';
     document.getElementById('customDaysField').style.display = 'none';
+    document.getElementById('customCalField').style.display  = 'none';
     document.getElementById('altBumpSlider').value = '30';
     document.getElementById('altCalSlider').value  = '180';
     document.getElementById('altBumpDisplay').textContent = '30';
@@ -1055,7 +1070,8 @@
     const wdSel      = document.getElementById('workingDays').value;
     const wd         = wdSel === 'custom' ? gv('customDays', 220) : parseFloat(wdSel);
     const curBump    = gv('currentBump', 1);
-    const curCal     = gv('currentCal', 30);
+    const curCalSel  = document.getElementById('currentCal').value;
+    const curCal     = curCalSel === 'custom' ? gv('customCal', 30) : parseFloat(curCalSel);
     const cylSz      = gv('cylinderSize');
     const cylCost    = gv('cylinderCost');
     const hr         = gv('hourlyRate');
@@ -1130,8 +1146,17 @@
       gasWarn.style.display = 'none';
     }
 
+    // ── BUMP FREQUENCY HELPER ──
+    // "Weekly" (7) and "Every 2 weeks" (14) imply calendar weeks to users,
+    // not working-day intervals. Use 365-based calculation for those values.
+    // All other bump intervals (1, 2, 3, 30) follow working-day basis.
+    const CALENDAR_BUMP = new Set([7, 14]);
+    const bumpPerYear = interval => CALENDAR_BUMP.has(interval)
+      ? 365 / interval
+      : wd  / interval;
+
     // SCENARIO A: full fleet, current intervals
-    const sBpd = wd / curBump;
+    const sBpd = bumpPerYear(curBump);
     const sCpd = 365 / curCal;
     const sBF  = sBpd * devices;
     const sCF  = sCpd * devices;
@@ -1144,7 +1169,7 @@
     const sT   = sGC + sLC + csC;
 
     // SCENARIO B: eligible on alt intervals, ineligible on current
-    const aBpd    = wd / altBump;
+    const aBpd    = bumpPerYear(altBump);
     const aCpd    = 365 / altCal;
     const aBFe    = aBpd * eligDev;    const aCFe = aCpd * eligDev;
     const aBFi    = sBpd * ineligDev;  const aCFi = sCpd * ineligDev;
@@ -1267,6 +1292,7 @@
 
   // ── COPY SUMMARY ──
   function copySummary() {
+    const d     = MODES[currentMode];
     const mode  = currentMode === 'docked' ? 'Docking Station' : 'Manual Testing';
     const date  = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
     const get   = id => document.getElementById(id).textContent.trim();
