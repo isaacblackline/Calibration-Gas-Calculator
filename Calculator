@@ -173,6 +173,8 @@
   .copy-btn:hover { border-color:var(--green); color:var(--green); background:var(--green-light); }
   .print-btn:hover { border-color:var(--slate); color:var(--black); background:#F5F5F5; }
   .copy-btn.copied { border-color:var(--green); color:var(--green); background:var(--green-light); }
+  .print-btn { display:flex; align-items:center; gap:6px; background:none; border:1.5px solid var(--border); border-radius:var(--radius); padding:7px 14px; font-family:var(--font-body); font-size:12px; font-weight:500; color:var(--slate); cursor:pointer; transition:all 0.15s; }
+  .print-btn:hover { border-color:var(--slate); color:var(--black); background:#F5F5F5; }
 
   /* METHODOLOGY */
   .methodology { margin-top:40px; border:1.5px solid var(--border); border-radius:var(--radius-lg); }
@@ -234,28 +236,86 @@
   .saving-gas-callout strong { font-weight:600; }
   .saving-labour-caveat { margin-top:8px; padding:9px 13px; background:#F5F5F5; border-left:3px solid #BBBBBB; border-radius:var(--radius); font-size:11px; color:var(--mid); line-height:1.5; }
 
+  /* REFINE SCENARIO B BLOCK: permanent, above saving banner */
+  .refine-block { background:var(--white); border:1.5px solid var(--border); border-radius:var(--radius-lg); box-shadow:var(--shadow); padding:20px 24px; margin-top:20px; }
+  .refine-head { display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+  .refine-head-icon { width:24px; height:24px; background:var(--red); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .refine-head-icon svg { width:12px; height:12px; fill:white; }
+  .refine-title { font-size:13px; font-weight:600; color:var(--black); }
+  .refine-sub { font-size:11px; color:var(--mid); margin-bottom:18px; padding-left:34px; }
+  .refine-sub .default-badge { margin-left:6px; }
+
+  /* LEAD CAPTURE: primary CTA + secondary copy/print */
+  .lead-cta { background:var(--red); color:white; border:none; border-radius:var(--radius); padding:11px 18px; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background 0.15s; box-shadow:0 2px 6px rgba(196,18,48,0.25); }
+  .lead-cta:hover { background:var(--red-dark); }
+  .lead-cta svg { width:14px; height:14px; fill:currentColor; }
+  .lead-cta-row { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+  .lead-detail { font-size:11px; color:var(--mid); margin-top:6px; line-height:1.5; }
+  .lead-detail strong { color:var(--slate); font-weight:600; }
+
+  /* LEAD FORM (revealed on click) */
+  .lead-form { display:none; margin-top:16px; padding:18px; background:#FAFAFA; border:1.5px solid var(--border); border-radius:var(--radius-lg); }
+  .lead-form.show { display:block; }
+  .lead-form-title { font-size:13px; font-weight:600; color:var(--black); margin-bottom:4px; }
+  .lead-form-sub { font-size:11px; color:var(--mid); margin-bottom:14px; }
+  .lead-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  @media(max-width:560px){ .lead-form-grid{ grid-template-columns:1fr; } }
+  .lead-form input[type="text"],.lead-form input[type="email"] { width:100%; height:38px; border:1.5px solid var(--border); border-radius:var(--radius); font-family:var(--font-body); font-size:13px; padding:0 12px; background:white; transition:border-color 0.15s; }
+  .lead-form input:focus { outline:none; border-color:var(--red); box-shadow:0 0 0 3px rgba(196,18,48,0.1); }
+  .lead-form input[aria-invalid="true"] { border-color:var(--amber); background:var(--amber-light); }
+  .lead-form-label { display:block; font-size:11px; font-weight:600; color:var(--slate); margin-bottom:5px; }
+  .lead-form-required { color:var(--red); }
+  .lead-form-actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px; }
+  .lead-submit { background:var(--red); color:white; border:none; border-radius:var(--radius); padding:9px 16px; font-family:var(--font-body); font-size:12px; font-weight:600; cursor:pointer; transition:background 0.15s; }
+  .lead-submit:hover { background:var(--red-dark); }
+  .lead-submit:disabled { background:var(--mid); cursor:not-allowed; }
+  .lead-cancel { background:none; border:none; font-family:var(--font-body); font-size:12px; color:var(--mid); cursor:pointer; padding:9px 8px; }
+  .lead-cancel:hover { color:var(--slate); }
+  .lead-error { font-size:11px; color:var(--amber); margin-top:4px; min-height:14px; }
+  .lead-privacy { font-size:10px; color:var(--mid); margin-top:10px; line-height:1.5; }
+  .lead-success { display:none; padding:14px 18px; background:var(--green-light); border-left:3px solid var(--green); border-radius:var(--radius); font-size:12px; color:var(--green); line-height:1.6; margin-top:16px; }
+  .lead-success.show { display:block; }
+  .lead-success strong { font-weight:600; }
+
+  /* PROCESS LIST: shows what's in the report */
+  .lead-includes { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .lead-includes-tag { font-size:10px; color:var(--slate); background:white; border:1px solid var(--border); padding:3px 8px; border-radius:20px; }
+  .lead-includes-tag svg { width:8px; height:8px; fill:var(--green); margin-right:3px; vertical-align:-1px; }
+
   /* MODE FEEDBACK TOAST */
   .mode-toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--charcoal); color:white; font-size:12px; padding:8px 16px; border-radius:20px; opacity:0; transition:opacity 0.2s, transform 0.2s; pointer-events:none; z-index:300; white-space:nowrap; }
   .mode-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* PRINT SUMMARY BLOCK: hidden in browser, visible only when printing */
+  .print-summary { display:none; }
+  .print-summary-section { margin-bottom:20px; }
+  .print-summary-heading { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#555; padding-bottom:6px; border-bottom:1px solid #DDD; margin-bottom:10px; }
+  .print-config-table { width:100%; border-collapse:collapse; font-size:11px; }
+  .print-config-table td { padding:4px 0; vertical-align:top; }
+  .print-config-table td:first-child { color:#666; width:200px; }
+  .print-config-table td:last-child { color:#111; font-weight:500; }
+  .print-methodology { font-size:11px; color:#555; line-height:1.65; }
 
   /* PRINT STYLES */
   @media print {
     * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     .site-header, .hero, .reset-bar, .section-label, .method-card,
-    .card, .progress-nudge, .adjust-panel, .methodology,
-    .saving-actions, .mode-toast, .tip-bubble, .gas-warn { display:none !important; }
+    .card, .progress-nudge, .adjust-panel, .methodology, .refine-block,
+    .lead-cta-row, .lead-form, .lead-success, .mode-toast, .tip-bubble, .gas-warn { display:none !important; }
     body { background:white; font-size:12px; }
     .main { padding:0; max-width:100%; }
     .results-section { display:block !important; }
     .divider { display:none; }
     .section-label { display:none !important; }
-    .scenario-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-    .saving-banner { box-shadow:none; border:1.5px solid #CCC; }
+    .print-summary { display:block; margin-bottom:24px; }
+    .scenario-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; page-break-inside:avoid; }
+    .saving-banner { box-shadow:none; border:1.5px solid #CCC; page-break-inside:avoid; margin-top:16px; }
     .saving-head { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .site-footer { padding:12px 0; background:white !important; border-top:1px solid #DDD; }
+    .site-footer { padding:12px 0; background:white !important; border-top:1px solid #DDD; margin-top:16px; }
     .footer-logo span { color:#111 !important; }
     .footer-note { color:#555 !important; }
     .print-header { display:flex !important; }
+    .tip-icon { display:none !important; }
   }
   .print-header { display:none; justify-content:space-between; align-items:center; padding-bottom:12px; margin-bottom:16px; border-bottom:2px solid var(--red); }
 
@@ -285,7 +345,7 @@
   <div class="hero-inner">
     <div class="hero-eyebrow">Self-Serve Cost Modelling Tool</div>
     <h1>What Is Your Testing<br>Regime <em>Actually</em> Costing?</h1>
-    <p class="hero-sub">Enter your fleet details to model the annual cost of your current bump test and calibration intervals, then see what a risk-calibrated alternative would look like.</p>
+    <p class="hero-sub">Enter your fleet details to model the annual cost of your current bump test and calibration intervals, then compare it against an extended interval alternative.</p>
     <div class="hero-rule"></div>
   </div>
 </div>
@@ -503,6 +563,56 @@
       <div style="font-family:'DM Sans',sans-serif;font-weight:600;font-size:16px"><span style="color:#111">blackline</span><span style="color:#C41230">safety</span></div>
       <div style="font-size:11px;color:#666" id="printDate"></div>
     </div>
+
+    <!-- PRINT-ONLY SUMMARY: hidden in browser, shown when printing -->
+    <div class="print-summary" id="printSummary">
+      <div class="print-summary-section">
+        <div class="print-summary-heading">Fleet Configuration</div>
+        <table class="print-config-table">
+          <tbody>
+            <tr><td>Testing method</td><td id="ps-mode">-</td></tr>
+            <tr><td>Number of devices</td><td id="ps-devices">-</td></tr>
+            <tr><td>Working days per year</td><td id="ps-wd">-</td></tr>
+            <tr><td>Current bump test frequency</td><td id="ps-bump">-</td></tr>
+            <tr><td>Current calibration frequency</td><td id="ps-cal">-</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="print-summary-section">
+        <div class="print-summary-heading">Key Inputs</div>
+        <table class="print-config-table">
+          <tbody>
+            <tr><td>Cylinder size</td><td id="ps-cylSz">-</td></tr>
+            <tr><td>Cylinder cost</td><td id="ps-cylCost">-</td></tr>
+            <tr><td>Gas per bump test</td><td id="ps-gpb">-</td></tr>
+            <tr><td>Time per bump test</td><td id="ps-tpt">-</td></tr>
+            <tr><td>Fully-loaded hourly rate</td><td id="ps-hr">-</td></tr>
+            <tr id="ps-eligRow" style="display:none"><td>Eligible devices</td><td id="ps-elig">-</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- CONDITIONAL: only shown when user changed at least one advanced assumption -->
+      <div class="print-summary-section" id="ps-advanced-section" style="display:none">
+        <div class="print-summary-heading">Adjusted Assumptions</div>
+        <table class="print-config-table" id="ps-advanced-table">
+          <tbody id="ps-advanced-body"></tbody>
+        </table>
+      </div>
+      <div class="print-summary-section">
+        <div class="print-summary-heading">Scenario B Settings</div>
+        <table class="print-config-table">
+          <tbody>
+            <tr><td>Alternative bump interval</td><td id="ps-altBump">-</td></tr>
+            <tr><td>Alternative calibration interval</td><td id="ps-altCal">-</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="print-summary-section">
+        <div class="print-summary-heading">About This Estimate</div>
+        <p class="print-methodology" id="ps-methodology"></p>
+      </div>
+    </div>
     <div class="divider"></div>
     <div class="section-label">Cost Comparison</div>
 
@@ -533,7 +643,7 @@
       <div class="scenario-card alternative">
         <div class="s-head" style="background:#C41230">
           <div class="s-label">Scenario B</div>
-          <div class="s-name">Risk-Calibrated Alternative</div>
+          <div class="s-name">Extended Interval Regime</div>
           <div class="s-interval" id="altIntervalLabel">30-day bump / 180-day cal</div>
         </div>
         <div class="s-body">
@@ -556,24 +666,107 @@
       </div>
       <div class="saving-body">
         <div class="saving-grid" id="savingGrid">
-          <div class="saving-item" id="item-gas"><div class="saving-item-lbl">Gas cost saving</div><div class="saving-item-val" id="savingGas">-</div></div>
-          <div class="saving-item" id="item-labour"><div class="saving-item-lbl">Labour cost saving</div><div class="saving-item-val" id="savingLabour">-</div></div>
+          <div class="saving-item" id="item-gas">
+            <div class="saving-item-lbl">Gas cost saving <button type="button" class="tip-icon" aria-hidden="true" id="gasNoteTip" data-tip="" aria-label="More information" style="display:none">?</button></div>
+            <div class="saving-item-val" id="savingGas">-</div>
+          </div>
+          <div class="saving-item" id="item-labour">
+            <div class="saving-item-lbl">Labour cost saving <button type="button" class="tip-icon" aria-hidden="true" id="labourNoteTip" data-tip="" aria-label="More information" style="display:none">?</button></div>
+            <div class="saving-item-val" id="savingLabour">-</div>
+          </div>
           <div class="saving-item saving-item-secondary"><div class="saving-item-lbl">Fewer test events / yr</div><div class="saving-item-val saving-item-val-sm" id="savingTests">-</div></div>
           <div class="saving-item saving-item-secondary"><div class="saving-item-lbl">Technician hours saved / yr</div><div class="saving-item-val saving-item-val-sm" id="savingHours">-</div></div>
         </div>
-        <div class="saving-gas-callout" id="savingGasCallout"></div>
-        <div class="saving-labour-caveat" id="savingLabourCaveat" style="display:none"></div>
         <div class="saving-neg" id="savingNeg" style="display:none"></div>
-        <div class="saving-actions">
-          <button class="copy-btn" id="copyBtn" onclick="copySummary()">
-            <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1H2z"/></svg>
-            Copy results summary
+        <div class="lead-cta-row">
+          <button class="lead-cta" onclick="showLeadForm()" id="leadCtaBtn">
+            <svg viewBox="0 0 16 16"><path d="M2 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4zm2 0v.5l4 2.5 4-2.5V4H4zm8 1.677L8.227 8 12 10.323V5.677zM4 5.677v4.646L7.773 8 4 5.677zM8 9.5L4.5 7.282 4 7.585V12h8V7.585l-.5-.303L8 9.5z"/></svg>
+            Get a shareable summary
           </button>
           <button class="print-btn" onclick="window.print()">
             <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/></svg>
-            Print / save as PDF
+            Print / Save as PDF
           </button>
         </div>
+        <!-- LEAD FORM: revealed when user clicks Get a shareable summary -->
+        <div class="lead-form" id="leadForm" role="region" aria-label="Email report request form">
+          <div class="lead-form-title">Get a shareable summary</div>
+          <div class="lead-form-grid">
+            <div>
+              <label class="lead-form-label" for="leadFirstName">First name <span class="lead-form-required">*</span></label>
+              <input type="text" id="leadFirstName" autocomplete="given-name" required>
+            </div>
+            <div>
+              <label class="lead-form-label" for="leadLastName">Last name <span class="lead-form-required">*</span></label>
+              <input type="text" id="leadLastName" autocomplete="family-name" required>
+            </div>
+          </div>
+          <div>
+            <label class="lead-form-label" for="leadEmail">Work email <span class="lead-form-required">*</span></label>
+            <input type="email" id="leadEmail" autocomplete="email" required>
+            <div class="lead-error" id="leadError" aria-live="polite"></div>
+          </div>
+          <div class="lead-form-actions">
+            <button class="lead-submit" id="leadSubmitBtn" onclick="submitLead()">Email my Summary</button>
+            <button class="lead-cancel" onclick="hideLeadForm()">Cancel</button>
+          </div>
+          <div class="lead-privacy">By submitting you agree to receive your requested summary from Blackline Safety. We will not share your details with third parties.</div>
+        </div>
+
+        <!-- SUCCESS STATE -->
+        <div class="lead-success" id="leadSuccess" role="status" aria-live="polite">
+          <strong>Your summary is on its way.</strong> We have sent your results to <span id="leadSuccessEmail"></span>. Check your inbox in a few minutes.
+        </div>
+      </div>
+    </div>
+
+    <!-- REFINE SCENARIO B: permanent block with sliders and eligibility -->
+    <div class="refine-block" id="refineBlock">
+      <div class="refine-head">
+        <div class="refine-head-icon"><svg viewBox="0 0 16 16"><path d="M1 3h14v1.5H1V3zm2 4h10v1.5H3V7zm2 4h6v1.5H5V11z"/></svg></div>
+        <div class="refine-title">Refine Scenario B</div>
+      </div>
+      <div class="refine-sub">Drag the sliders to model different intervals and watch the saving update in real time. <span id="refineDefaultBadge"></span></div>
+      <div class="input-grid two-col" style="margin-bottom:20px">
+        <div class="slider-field">
+          <div class="slider-header">
+            <label class="slider-label" for="altBumpSlider">Alternative Bump Interval <button type="button" class="tip-icon" aria-hidden="true" data-tip="Drag to model a more conservative or fully extended bump test interval. 30 days is the validated ceiling for infrared and MPS sensor technologies in low-to-medium risk diffused applications." aria-label="More information">?</button></label>
+            <div><span class="slider-val" id="altBumpDisplay">30</span><span class="slider-unit"> days</span></div>
+          </div>
+          <input type="range" id="altBumpSlider" min="1" max="30" value="30" step="1" oninput="onSlider()">
+          <div class="slider-ends"><span class="slider-end">1 day (daily)</span><span class="slider-end max">30 days (validated ceiling)</span></div>
+          <div class="interval-warn" id="bumpSameWarn">This matches your current bump interval; no saving on this dimension.</div>
+        </div>
+        <div class="slider-field">
+          <div class="slider-header">
+            <label class="slider-label" for="altCalSlider">Alternative Calibration Interval <button type="button" class="tip-icon" aria-hidden="true" data-tip="Drag to model a phased or fully extended calibration interval. 180 days is the validated ceiling for infrared and MPS sensor technologies. Minimum is 30 days, representing the lower bound of the validated alternative range this tool models. If your current calibration interval is more frequent than 30 days, that is already captured in Scenario A." aria-label="More information">?</button></label>
+            <div><span class="slider-val" id="altCalDisplay">180</span><span class="slider-unit"> days</span></div>
+          </div>
+          <input type="range" id="altCalSlider" min="30" max="180" value="180" step="1" oninput="onSlider()">
+          <div class="slider-ends"><span class="slider-end">30 days</span><span class="slider-end max">180 days (validated ceiling)</span></div>
+          <div class="interval-warn" id="calSameWarn">This matches your current calibration interval; no saving on this dimension.</div>
+        </div>
+      </div>
+
+      <div style="padding-top:16px;border-top:1px solid var(--border)">
+        <div class="field">
+          <label class="field-label" for="eligibleDevices">Devices Eligible for Extended Intervals <button type="button" class="tip-icon" aria-hidden="true" data-tip="Enter the number of devices where extended intervals would apply. In four-gas monitors, the LEL sensor is the primary driver of bump test and calibration frequency. Infrared and MPS sensor technologies eliminate the silent-failure risk of catalytic bead sensors, changing the technical basis for the interval. Exclude devices in confined space entry, IDLH environments, emergency response, environments requiring hydrogen detection, or any role where site rules mandate daily testing." aria-label="More information">?</button></label>
+          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:4px">
+            <div class="input-wrap" style="max-width:180px">
+              <input type="number" id="eligibleDevices" min="0" placeholder="e.g. 80" oninput="calculate()">
+            </div>
+            <div id="eligibleSplit" style="font-size:12px;color:var(--mid);display:none">
+              <span id="eligibleCount" style="font-weight:600;color:var(--slate)"></span> on extended intervals &nbsp;·&nbsp;
+              <span id="ineligibleCount" style="font-weight:600;color:var(--slate)"></span> remain on current regime
+            </div>
+          </div>
+          <div class="field-default">Leave blank to apply extended intervals to your full fleet</div>
+        </div>
+      </div>
+
+      <div class="scope-note">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0;margin-top:1px"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 1.5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zM8 4a.75.75 0 100 1.5A.75.75 0 008 4zm-.75 2.5a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4z"/></svg>
+        <span>Maximum intervals reflect validated performance data for infrared and MPS sensor technologies in low-to-medium risk diffused applications. They do not apply to confined space, IDLH, or emergency response roles.</span>
       </div>
     </div>
 
@@ -583,61 +776,16 @@
         <div class="adjust-header-left">
           <div class="adjust-icon"><svg viewBox="0 0 16 16"><path d="M1 3h14v1.5H1V3zm2 4h10v1.5H3V7zm2 4h6v1.5H5V11z"/></svg></div>
           <div>
-            <div class="adjust-title">Adjust Your Comparison</div>
-            <div class="adjust-sub" id="adjustSub">Scenario B: 30-day bump / 180-day cal (default) &middot; intervals, eligibility, and assumptions</div>
+            <div class="adjust-title">Advanced Assumptions</div>
+            <div class="adjust-sub">Cylinder efficiency, calibration multiplier, retest rate, labour multiplier, and confined space testing</div>
           </div>
         </div>
         <div class="adjust-toggle">Adjust <span class="adjust-arrow">&#9660;</span></div>
       </div>
       <div class="adjust-body" id="adjustBody">
 
-        <!-- SCENARIO B INTERVALS -->
-        <div class="sub-section-title">Scenario B: Alternative Intervals</div>
-        <div class="input-grid two-col" style="margin-bottom:20px">
-          <div class="slider-field">
-            <div class="slider-header">
-              <label class="slider-label" for="altBumpSlider">Alternative Bump Interval <button type="button" class="tip-icon" aria-hidden="true" data-tip="Drag to model a more conservative or fully risk-calibrated bump test interval. 30 days is the manufacturer-validated ceiling for LEL MPS sensors in low-to-medium risk diffused applications." aria-label="More information">?</button></label>
-              <div><span class="slider-val" id="altBumpDisplay">30</span><span class="slider-unit"> days</span></div>
-            </div>
-            <input type="range" id="altBumpSlider" min="1" max="30" value="30" step="1" oninput="onSlider()">
-            <div class="slider-ends"><span class="slider-end">1 day (daily)</span><span class="slider-end max">30 days (validated ceiling)</span></div>
-            <div class="interval-warn" id="bumpSameWarn">This matches your current bump interval; no saving on this dimension.</div>
-          </div>
-          <div class="slider-field">
-            <div class="slider-header">
-              <label class="slider-label" for="altCalSlider">Alternative Calibration Interval <button type="button" class="tip-icon" aria-hidden="true" data-tip="Drag to model a phased or fully risk-calibrated calibration interval. 180 days is the manufacturer-validated ceiling for LEL MPS sensors. Minimum is 30 days, representing the lower bound of the validated alternative range this tool models. If your current calibration interval is more frequent than 30 days, that is already captured in Scenario A." aria-label="More information">?</button></label>
-              <div><span class="slider-val" id="altCalDisplay">180</span><span class="slider-unit"> days</span></div>
-            </div>
-            <input type="range" id="altCalSlider" min="30" max="180" value="180" step="1" oninput="onSlider()">
-            <div class="slider-ends"><span class="slider-end">30 days</span><span class="slider-end max">180 days (validated ceiling)</span></div>
-            <div class="interval-warn" id="calSameWarn">This matches your current calibration interval; no saving on this dimension.</div>
-          </div>
-        </div>
-
-        <!-- ELIGIBLE DEVICES -->
-        <div style="padding-top:16px;border-top:1px solid var(--border);margin-bottom:20px">
-          <div class="field">
-            <label class="field-label" for="eligibleDevices">Devices Eligible for Extended Intervals <button type="button" class="tip-icon" aria-hidden="true" data-tip="Enter the number of devices where extended intervals would apply if you moved to MPS sensor technology. In four-gas monitors, the LEL sensor is the primary driver of bump test and calibration frequency; replacing it with MPS changes the governing constraint for the whole device. Exclude devices in confined space entry, IDLH environments, emergency response, environments requiring hydrogen detection, or any role where site rules mandate daily testing." aria-label="More information">?</button></label>
-            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:4px">
-              <div class="input-wrap" style="max-width:180px">
-                <input type="number" id="eligibleDevices" min="0" placeholder="e.g. 80" oninput="calculate()">
-              </div>
-              <div id="eligibleSplit" style="font-size:12px;color:var(--mid);display:none">
-                <span id="eligibleCount" style="font-weight:600;color:var(--slate)"></span> on extended intervals &nbsp;·&nbsp;
-                <span id="ineligibleCount" style="font-weight:600;color:var(--slate)"></span> remain on current regime
-              </div>
-            </div>
-            <div class="field-default">Leave blank to apply extended intervals to your full fleet</div>
-          </div>
-        </div>
-
-        <div class="scope-note">
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0;margin-top:1px"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 1.5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zM8 4a.75.75 0 100 1.5A.75.75 0 008 4zm-.75 2.5a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4z"/></svg>
-          <span>Maximum intervals reflect validated performance data for LEL MPS sensors in low-to-medium risk diffused applications. They do not apply to confined space, IDLH, or emergency response roles.</span>
-        </div>
-
         <!-- ADVANCED ASSUMPTIONS -->
-        <div class="sub-section-title" style="margin-top:24px">Advanced Assumptions</div>
+        <div class="sub-section-title" style="margin-top:0">Advanced Assumptions</div>
 
         <!-- Row 1: Gas and retest model assumptions -->
         <div class="input-grid three-col" style="margin-bottom:16px">
@@ -717,9 +865,14 @@
     </div>
     <div class="meth-body" id="methBody">
       <h4>What This Calculator Models</h4>
-      <p>This calculator helps safety and operations teams quantify the cost of their current gas detection testing regime and compare it against a risk-calibrated alternative based on modern sensor technology.</p>
-      <p>It models the <strong>annual cost of routine interval-based bump testing and calibration</strong> for a portable gas detection fleet, comparing your current regime against validated intervals for LEL MPS sensor technology: up to 30-day bump test intervals and up to 180-day calibration intervals under appropriate conditions.</p>
+      <p>This calculator helps safety and operations teams quantify the cost of their current gas detection testing regime and compare it against an extended interval alternative supported by modern sensor technology.</p>
+      <p>It models the <strong>annual cost of routine interval-based bump testing and calibration</strong> for a portable gas detection fleet, comparing your current regime against validated extended intervals supported by infrared and MPS sensor technologies: up to 30-day bump test intervals and up to 180-day calibration intervals under appropriate conditions.</p>
       <p>Costs are calculated across two dimensions: <strong>calibration gas consumption</strong> (cylinder volume, cost, and efficiency-adjusted usable volume per test) and <strong>technician labour</strong> (bump test time and calibration time, derived via a labour time multiplier, applied to event counts and multiplied by fully-loaded hourly rate). Both dimensions use a parallel structure: the user enters a bump test figure and a multiplier determines the calibration figure, for both gas and labour.</p>
+      <h4>How Labour Cost Is Calculated</h4>
+      <p>Labour cost is calculated separately for bump tests and calibrations using a two-step approach that mirrors the gas cost model. You enter a single figure — your time per bump test — and the calibration time is derived by multiplying that figure by the Labour Time Multiplier.</p>
+      <p><strong>For Manual Testing:</strong> You enter how many minutes a bump test takes per device. This includes connecting the regulator, waiting for sensor response, logging the result, and any associated downtime. The default is 3 minutes, consistent with typical four-gas monitor manual procedures. Calibration time is derived by multiplying your bump test time by the Labour Time Multiplier (default 2.5x), giving approximately 7.5 minutes per calibration. Annual labour cost is then: (bump tests per year × bump time per test × hourly rate) + (calibrations per year × calibration time × hourly rate). All times are converted from minutes to hours before multiplying by the hourly rate.</p>
+      <p><strong>For Docking Station Testing:</strong> You enter the technician's active handling time per device — loading the device into the station and retrieving it after the cycle completes. The station runs the test autonomously; only the handling time carries a labour cost. The default is 1 minute per device for sequential single-device loading. Calibration handling time is derived by multiplying by the Labour Time Multiplier (default 3x), giving approximately 3 minutes per calibration handling event. The annual labour cost calculation is the same structure as manual testing. For stations with multiple bays where devices are loaded simultaneously, the effective per-device time is lower than the default — a 20-bay station loading 20 devices in one cycle has an effective handling time of seconds per device, not 1 minute. Entering your actual handling time in the Time Per Bump Test field will give a more accurate labour figure for your specific setup.</p>
+      <p>The retest rate, if set above 0%, is applied equally to both bump tests and calibrations. A 5% retest rate means 5% additional test events — and the corresponding gas and labour cost — are added to the annual total for each event type.</p>
       <h4>Prorated Annual Event Counts</h4>
       <p>Annual test counts are calculated as continuous prorated values rather than rounded integers. For example, a 30-day calibration interval applied over 365 calendar days yields 12.17 calibrations per device per year, and this figure is used directly in the cost calculation. The displayed test counts in the results are rounded to whole numbers for readability, which means the visible count may differ slightly from the underlying cost basis. This approach treats the annual figure as an expected-value estimate, which is appropriate for a cost modelling tool used over a full year across a fleet of devices. The methodology note makes this explicit because the displayed numbers look more concrete than they are.</p>
       <h4>Testing Method and Default Assumptions</h4>
@@ -736,7 +889,7 @@
       <h4>Calibration Gas Volume</h4>
       <p>Full calibration events consume more gas than bump tests. The calibration gas multiplier, set in the Advanced Assumptions section, controls this ratio as a multiple of the bump test gas volume.</p>
       <p>For <strong>manual four-gas testing</strong>, a bump test consumes approximately 0.3L and a calibration approximately 1.2L, giving a ratio of 4x. For <strong>docking station testing</strong>, a bump test consumes approximately 0.15L due to precision metered short-duration flow, while a calibration still consumes approximately 1L, giving a ratio of 6x. The docked ratio is higher not because calibration uses more gas in absolute terms, but because docked bump gas consumption is significantly lower, which amplifies the ratio. These figures are based on QA-validated measurements for standard four-gas monitors.</p>
-      <p>In standard four-gas monitors, the LEL sensor is the primary driver of bump test and calibration frequency. The catalytic bead LEL sensor can be poisoned by silicones, sulphur compounds, and halogens, and critically it fails silently without alerting the user. This silent-failure risk is the technical basis for the industry-wide daily bump test requirement. MPS sensors do not use a catalyst and cannot be poisoned, removing this failure mode and changing the technical basis for the interval. The O2, H2S, and CO sensors in a four-gas monitor use electrochemical technology that drifts predictably and fails with an alarm signal rather than silently, meaning they do not drive the interval frequency in the same way.</p>
+      <p>In standard four-gas monitors, the LEL sensor is the primary driver of bump test and calibration frequency. The catalytic bead LEL sensor can be poisoned by silicones, sulphur compounds, and halogens, and critically it fails silently without alerting the user. This silent-failure risk is the technical basis for the industry-wide daily bump test requirement. Both <strong>infrared (IR)</strong> and <strong>MPS</strong> sensor technologies remove this failure mode: IR sensors measure gas concentration optically and cannot be chemically poisoned, while MPS sensors use a micro-fabricated structure that similarly eliminates the catalyst. Neither fails silently — both produce a measurable alarm or fault condition rather than a silent degradation. This changes the technical basis for the bump test interval. The O2, H2S, and CO sensors in a four-gas monitor use electrochemical technology that drifts predictably and fails with an alarm signal rather than silently, meaning they do not drive the interval frequency in the same way.</p>
       <p>Single-gas devices should use a lower multiplier, typically 2x to 3x. The field accepts values in 0.5x increments to allow precise adjustment.</p>
       <h4>Confined Space Pre-Entry Testing</h4>
       <p>Confined space pre-entry bump testing is a regulatory requirement in most jurisdictions regardless of sensor type or testing interval. This calculator models confined space testing as a <strong>site-level cost</strong> based on the number of entry events per week and the number of devices used per entry (crew size), applied across 52 calendar weeks per year. This cost is added equally to both scenarios; it does not influence the saving calculation but produces a more accurate total cost picture for sites where confined space work is a regular activity.</p>
@@ -764,7 +917,7 @@
       <h4>Important Limitations</h4>
       <p>Results are estimates and should be treated as a starting point for internal discussion. Actual savings depend on negotiated gas pricing, specific device and regulator configurations, the mix of sensor types in your fleet, and applicable regulatory requirements in your jurisdiction. This tool does not constitute compliance guidance. Always apply the most stringent requirements applicable to your site and consult your safety officer before modifying any testing SOP.</p>
       <p><strong>Labour cost in docking station environments:</strong> The labour cost model applies bump test time to bump events and calibration time (derived via the labour time multiplier) to calibration events. Both assume sequential single-device handling. In environments with multi-bay stations, technicians load multiple devices simultaneously, so the effective per-device time is a fraction of the single-device figure. Organisations with multi-bay stations should reduce the Time Per Bump Test field to reflect their actual per-device handling time. The gas saving figure is not affected by this limitation.</p>
-      <p>This calculator was developed by <strong>Blackline Safety</strong> in collaboration with Nevada Nano, manufacturer of the LEL MPS sensor. It reflects Blackline Safety's point of view on the relationship between sensor diagnostic capability and maintenance interval design.</p>
+      <p>This calculator was developed by <strong>Blackline Safety</strong>. The extended interval ceilings (30-day bump, 180-day calibration) reflect validated performance data for infrared and MPS LEL sensor technologies.</p>
     </div>
   </div>
 
@@ -1059,6 +1212,15 @@
     document.getElementById('results').style.display = 'none';
     document.getElementById('progressNudge').classList.remove('visible');
     document.getElementById('savingBanner').classList.remove('show');
+    // Hide lead form and clear it
+    document.getElementById('leadForm').classList.remove('show');
+    document.getElementById('leadSuccess').classList.remove('show');
+    ['leadFirstName','leadLastName','leadEmail'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = '';
+      el.removeAttribute('aria-invalid');
+    });
+    document.getElementById('leadError').textContent = '';
     // Reset to manual mode
     setMode('manual');
     window.scrollTo({ top:0, behavior:'smooth' });
@@ -1115,7 +1277,17 @@
     updateNudge(devices, cylSz, cylCost, hr);
 
     const hasData = devices > 0 && cylSz > 0 && cylCost > 0 && hr > 0;
-    document.getElementById('results').style.display = hasData ? 'block' : 'none';
+    const resultsEl = document.getElementById('results');
+    const wasHidden = resultsEl.style.display === 'none' || resultsEl.style.display === '';
+    resultsEl.style.display = hasData ? 'block' : 'none';
+    // Auto-scroll to results only after user pauses typing (800ms debounce)
+    // Prevents scrolling mid-entry e.g. when typing "50" it waits until after the "0"
+    if (hasData && wasHidden) {
+      clearTimeout(window._scrollTimer);
+      window._scrollTimer = setTimeout(() => {
+        resultsEl.scrollIntoView({ behavior:'smooth', block:'start' });
+      }, 800);
+    }
     if (!hasData) return;
 
     // Derived
@@ -1203,14 +1375,13 @@
     const altNote = (eligRaw!==''&&eligDev<devices) ? ' · '+Math.round(eligDev)+' of '+Math.round(devices)+' devices' : '';
     const altLabel = (altBump===1?'Daily bump':altBump+'-day bump')+' / '+altCal+'-day cal'+altNote;
     set('altIntervalLabel', altLabel);
-    // Update adjust panel subtitle with current Scenario B intervals + default badge
+    // Update default badge in refine block (visible above sliders)
     const isDefault = altBump === 30 && altCal === 180;
-    const intervalStr = (altBump===1?'Daily bump':altBump+'-day bump')+' / '+altCal+'-day cal';
-    const adjustSub = document.getElementById('adjustSub');
-    if (adjustSub) {
-      adjustSub.innerHTML = 'Scenario B: <strong>' + intervalStr + '</strong>' +
-        (isDefault ? ' <span class="default-badge">default</span>' : '') +
-        ' &middot; intervals, eligibility, and assumptions';
+    const badge = document.getElementById('refineDefaultBadge');
+    if (badge) {
+      badge.innerHTML = isDefault
+        ? '<span class="default-badge">Currently at default</span>'
+        : '<span class="default-badge" style="background:var(--green-light);color:var(--green)">Customised</span>';
     }
 
     // ── SAVING BANNER ──
@@ -1232,7 +1403,7 @@
       neg.style.display = 'block';
       neg.textContent = (altBump===curBump && altCal===curCal)
         ? 'Scenario B intervals match your current regime. Use the sliders in "Adjust Your Comparison" to model a saving.'
-        : 'Your current regime is already at or near the risk-calibrated interval. Review your inputs or consult the methodology notes.';
+        : 'Your current regime is already at or near the extended interval ceiling. Review your inputs or consult the methodology notes.';
       head.style.background = '#7A3820';
     } else {
       set('savingAmt', fmt(saving));
@@ -1264,30 +1435,115 @@
       grid.insertBefore(itemGas, grid.firstChild);
     }
 
-    // Gas callout: show in docked mode when gas saving is positive and dominant
-    const callout = document.getElementById('savingGasCallout');
-    const gasIsDominant = svGas > 0 && svGas >= svLab;
+    // Gas info icon: show in docked mode with accurate note about what drives gas saving
+    const gasNoteTip = document.getElementById('gasNoteTip');
     const isDocked = mode === 'docked';
-    if (gasIsDominant && isDocked && saving > 0) {
+    if (isDocked && svGas > 0 && saving > 0) {
       const calSvPct = sCF > 0 ? Math.round(((sCF - aCF) / sCF) * 100) : 0;
-      callout.innerHTML = '<strong>Calibration gas is the primary saving driver.</strong> Moving from ' +
-        (CL[curCal]||curCal+'-day') + ' to ' + altCal + '-day calibration intervals reduces annual calibration events by ' +
-        calSvPct + '%, which accounts for the majority of the gas saving in a docking station environment.';
-      callout.classList.add('show');
+      gasNoteTip.dataset.tip = 'Calibration interval reduction accounts for ' + calSvPct + '% fewer calibration events. Bump tests consume more gas in total volume; calibrations drive a larger proportional saving due to the interval change.';
+      gasNoteTip.style.display = 'inline-flex';
     } else {
-      callout.classList.remove('show');
+      gasNoteTip.style.display = 'none';
     }
 
-    // Labour caveat: show in docked mode to flag multi-bay station limitation
-    const labCaveat = document.getElementById('savingLabourCaveat');
+    // Labour info icon: show in docked mode to flag multi-bay station caveat
+    const labourNoteTip = document.getElementById('labourNoteTip');
     if (isDocked && svLab > 0 && saving > 0) {
-      labCaveat.textContent = 'Note: this figure assumes sequential device handling. In docking station environments with multi-bay stations, devices loaded simultaneously reduce the effective per-device time significantly. The gas saving above is not affected.';
-      labCaveat.style.display = 'block';
+      labourNoteTip.dataset.tip = 'Assumes sequential device handling. Multi-bay stations loading devices simultaneously will see lower effective per-device time and a smaller labour saving.';
+      labourNoteTip.style.display = 'inline-flex';
     } else {
-      labCaveat.style.display = 'none';
+      labourNoteTip.style.display = 'none';
     }
 
     document.getElementById('results').classList.add('animate-in');
+
+    // ── PRINT SUMMARY POPULATION ──
+    const getSelText = id => {
+      const el = document.getElementById(id);
+      return el.options[el.selectedIndex]?.text || '-';
+    };
+    const psVal = (id, fallback) => {
+      const v = document.getElementById(id).value;
+      return v || fallback || '-';
+    };
+
+    // Always-visible fleet config
+    const modeLabel = currentMode === 'docked' ? 'Docking Station' : 'Manual Testing';
+    document.getElementById('ps-mode').textContent    = modeLabel;
+    document.getElementById('ps-devices').textContent = psVal('devices') + ' devices';
+    document.getElementById('ps-wd').textContent      = getSelText('workingDays');
+    document.getElementById('ps-bump').textContent    = getSelText('currentBump');
+    document.getElementById('ps-cal').textContent     = curCalSel === 'custom'
+      ? psVal('customCal') + ' days (custom)'
+      : getSelText('currentCal');
+
+    // Always-visible key inputs (only user-entered fields)
+    document.getElementById('ps-cylSz').textContent  = psVal('cylinderSize') + ' L';
+    document.getElementById('ps-cylCost').textContent = currSym + psVal('cylinderCost');
+    document.getElementById('ps-gpb').textContent    = (document.getElementById('gasPerBump').value || d.gpb) + ' L';
+    document.getElementById('ps-tpt').textContent    = (document.getElementById('timePerTest').value || d.tptFallback) + ' min';
+    document.getElementById('ps-hr').textContent     = currSym + psVal('hourlyRate') + '/hr';
+
+    // Eligible devices row: only when partial fleet
+    const psEligRow = document.getElementById('ps-eligRow');
+    if (eligRaw !== '' && eligDev < devices) {
+      psEligRow.style.display = 'table-row';
+      document.getElementById('ps-elig').textContent = Math.round(eligDev) + ' of ' + Math.round(devices) + ' devices';
+    } else {
+      psEligRow.style.display = 'none';
+    }
+
+    // Scenario B settings
+    document.getElementById('ps-altBump').textContent = altBump + (altBump === 1 ? ' day (daily)' : ' days');
+    document.getElementById('ps-altCal').textContent  = altCal + ' days';
+
+    // Conditional advanced assumptions:
+    // Only show fields where the user changed the value from the mode default.
+    // Plain-language labels so a director can understand them without tool context.
+    const advRows = [];
+    const calMultEl  = document.getElementById('calMult');
+    const labMultEl  = document.getElementById('labMult');
+    const cylEffEl   = document.getElementById('cylinderEff');
+    const retestEl   = document.getElementById('retestRate');
+
+    const calMultVal  = parseFloat(calMultEl.value);
+    const labMultVal  = parseFloat(labMultEl.value);
+    const cylEffVal   = cylEffEl.value;
+    const retestVal   = parseFloat(retestEl.value);
+
+    if (!isNaN(calMultVal) && calMultVal !== d.calMult) {
+      advRows.push(['Gas used per calibration vs bump test', calMultVal + 'x']);
+    }
+    if (!isNaN(labMultVal) && labMultVal !== d.labMultFallback) {
+      advRows.push(['Calibration time vs bump test time', labMultVal + 'x']);
+    }
+    if (cylEffVal && cylEffVal !== d.cylEffVal) {
+      const pct = Math.round(parseFloat(cylEffVal) * 100);
+      advRows.push(['Usable gas per cylinder', pct + '%']);
+    }
+    if (!isNaN(retestVal) && retestVal !== 0) {
+      advRows.push(['Retest rate (failed or inconclusive tests)', Math.round(retestVal * 100) + '%']);
+    }
+
+    const advSection = document.getElementById('ps-advanced-section');
+    const advBody    = document.getElementById('ps-advanced-body');
+    if (advRows.length > 0) {
+      advBody.innerHTML = advRows.map(([label, value]) =>
+        '<tr><td>' + label + '</td><td>' + value + '</td></tr>'
+      ).join('');
+      advSection.style.display = 'block';
+    } else {
+      advSection.style.display = 'none';
+    }
+
+    // Bespoke methodology paragraph for the summary
+    document.getElementById('ps-methodology').textContent =
+      'This estimate models the annual cost of routine bump testing and calibration for a ' +
+      Math.round(devices) + '-device fleet, comparing your current regime against an extended interval alternative. ' +
+      'Gas costs are calculated from cylinder volume, efficiency-adjusted usable gas, and consumption per test event. ' +
+      'Labour costs use your bump test time as a base with calibration time derived via a multiplier, applied across all annual test events at your fully-loaded hourly rate. ' +
+      'Results are prorated annual estimates based on the inputs you provided. They cover routine interval testing only and exclude post-alarm retesting, post-incident testing, and emergency response. ' +
+      'This tool does not constitute compliance guidance.';
   }
 
   // ── COPY SUMMARY ──
@@ -1361,6 +1617,101 @@
     }).catch(() => {
       alert('Copy failed. Please select and copy the results manually.');
     });
+  }
+
+  // ── LEAD FORM (placeholder: backend integration required) ──
+  // submitLead() currently captures data to console and shows success state.
+  // To wire up real email send: replace the placeholder with a fetch() call
+  // to your form endpoint (HubSpot, Marketo, custom API). The data shape
+  // captured here is intended to be passed directly to that endpoint.
+  function showLeadForm() {
+    document.getElementById('leadForm').classList.add('show');
+    document.getElementById('leadSuccess').classList.remove('show');
+    setTimeout(() => document.getElementById('leadFirstName').focus(), 50);
+  }
+  function hideLeadForm() {
+    const f = document.getElementById('leadForm');
+    f.classList.remove('show');
+    document.getElementById('leadError').textContent = '';
+    ['leadFirstName','leadLastName','leadEmail'].forEach(id => {
+      document.getElementById(id).removeAttribute('aria-invalid');
+    });
+  }
+  function validateLead() {
+    const fn = document.getElementById('leadFirstName');
+    const ln = document.getElementById('leadLastName');
+    const em = document.getElementById('leadEmail');
+    const errEl = document.getElementById('leadError');
+    [fn, ln, em].forEach(el => el.removeAttribute('aria-invalid'));
+    errEl.textContent = '';
+
+    if (!fn.value.trim()) { fn.setAttribute('aria-invalid','true'); errEl.textContent = 'Please enter your first name.'; fn.focus(); return null; }
+    if (!ln.value.trim()) { ln.setAttribute('aria-invalid','true'); errEl.textContent = 'Please enter your last name.'; ln.focus(); return null; }
+    const emailVal = em.value.trim();
+    if (!emailVal) { em.setAttribute('aria-invalid','true'); errEl.textContent = 'Please enter your email address.'; em.focus(); return null; }
+    // Simple email format check: something@something.something
+    const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRx.test(emailVal)) { em.setAttribute('aria-invalid','true'); errEl.textContent = 'Please enter a valid email address.'; em.focus(); return null; }
+
+    return { firstName: fn.value.trim(), lastName: ln.value.trim(), email: emailVal };
+  }
+  function submitLead() {
+    const data = validateLead();
+    if (!data) return;
+
+    // Build the full payload that would be sent to the backend.
+    // This includes the user's identity AND the full calculator state
+    // so a server-side PDF can be generated from the same inputs.
+    const payload = {
+      lead: data,
+      generatedAt: new Date().toISOString(),
+      currency: document.getElementById('currencySelect').value,
+      mode: currentMode,
+      inputs: {
+        devices: document.getElementById('devices').value,
+        workingDays: document.getElementById('workingDays').value,
+        customDays: document.getElementById('customDays').value,
+        currentBump: document.getElementById('currentBump').value,
+        currentCal: document.getElementById('currentCal').value,
+        customCal: document.getElementById('customCal').value,
+        cylinderSize: document.getElementById('cylinderSize').value,
+        cylinderCost: document.getElementById('cylinderCost').value,
+        gasPerBump: document.getElementById('gasPerBump').value,
+        timePerTest: document.getElementById('timePerTest').value,
+        hourlyRate: document.getElementById('hourlyRate').value,
+        eligibleDevices: document.getElementById('eligibleDevices').value,
+        cylinderEff: document.getElementById('cylinderEff').value,
+        calMult: document.getElementById('calMult').value,
+        labMult: document.getElementById('labMult').value,
+        retestRate: document.getElementById('retestRate').value,
+        confinedSpace: document.getElementById('confinedSpace').value,
+        devicesPerCS: document.getElementById('devicesPerCS').value,
+        altBumpSlider: document.getElementById('altBumpSlider').value,
+        altCalSlider: document.getElementById('altCalSlider').value,
+      },
+    };
+
+    // PLACEHOLDER: replace with real backend call.
+    // Example: fetch('/api/calculator-lead', { method:'POST', body:JSON.stringify(payload) })
+    console.log('[Lead capture placeholder] Would submit:', payload);
+
+    // Disable button to prevent double-submit, then show success state
+    const btn = document.getElementById('leadSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    // Simulate brief async delay so success state feels real, even with no backend
+    setTimeout(() => {
+      hideLeadForm();
+      document.getElementById('leadSuccessEmail').textContent = data.email;
+      document.getElementById('leadSuccess').classList.add('show');
+      btn.disabled = false;
+      btn.textContent = 'Email my Summary';
+      // Clear form for next use
+      ['leadFirstName','leadLastName','leadEmail'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+    }, 500);
   }
 
   window.addEventListener('load', () => {
